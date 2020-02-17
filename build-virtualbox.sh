@@ -28,7 +28,7 @@ echo 'Creating output directory'
 mkdir -p output
 
 echo 'Building base images'
-packer build \
+$PACKER build \
   -only=virtualbox-iso \
   -except=vsphere,vsphere-template \
   -var 'vhv_enable=true' \
