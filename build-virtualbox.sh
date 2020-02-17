@@ -4,11 +4,17 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 pushd $DIR
 
+if [[ "$( grep Microsoft /proc/version )" ]]; then
+  PACKER="packer.exe"
+else
+  PACKER="packer"
+fi
+
 echo 'creating output directory'
 mkdir -p output
 
 echo 'building base images'
-packer build \
+$PACKER build \
   -only=virtualbox-iso \
   -except=vsphere,vsphere-template \
   -var 'vhv_enable=true' \
