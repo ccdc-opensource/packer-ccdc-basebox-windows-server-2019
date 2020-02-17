@@ -4,6 +4,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 pushd $DIR
 
+if [[ "$( grep Microsoft /proc/version )" ]]; then
+  PACKER="packer.exe"
+else
+  PACKER="packer"
+fi
+
 echo 'creating output directory'
 mkdir -p output
 
@@ -11,7 +17,7 @@ echo 'cleaning up intermediate output'
 rm -rf ./output//packer-centos-7.7-x86_64-vmware
 
 echo 'building base images'
-packer build \
+$PACKER build \
   -only=vmware-iso \
   -except=vsphere,vsphere-template \
   -var 'build_directory=./output/' \
