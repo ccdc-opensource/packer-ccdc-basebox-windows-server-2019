@@ -1,0 +1,21 @@
+# The Vmware Server host, where all hosts are controlled from
+# This is the root item in the Hosts and Clusters view in vSphere
+export VMWARECENTER_HOST=""
+# The name the new virtual machine will have on the VMWare UI
+export VMWARECENTER_VM_NAME=""
+# The name of the datacenter, it's the child item under the root item in the Hosts and Clusters view in vSphere
+export VMWARECENTER_DATACENTER=""
+# The cluster name, it's the child item under the datacenter  in the Hosts and Clusters view in vSphere
+export VMWARECENTER_CLUSTER_NAME=""
+# The name of the physical machine where the VM will be hosted
+export VMWARECENTER_ESXI_HOST=""
+# The name of the datastore where the VM's files will be stored
+export VMWARECENTER_DATASTORE=""
+# The name of the network where the VM will connect to, there is no need to prefix this with the datacenter or cluster
+export VMWARECENTER_VM_NETWORK=""
+# The folder where the VM will go under in the VMs and Templates view in vSphere, there is no need to prefix this with the cluster
+export VMWARECENTER_VM_FOLDER=""
+# The username used to access vSphere
+export VMWARECENTER_USERNAME=""
+# The password used to access vSphere
+export VMWARECENTER_PASSWORD=''

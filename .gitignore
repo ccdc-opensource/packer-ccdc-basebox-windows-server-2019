@@ -4,3 +4,4 @@
 /output
 *.vmdk
 *.box
+vsphere-environment-do-not-add
