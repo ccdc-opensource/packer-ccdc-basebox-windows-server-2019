@@ -87,7 +87,35 @@
       "output": "{{ user `build_directory` }}/{{user `box_basename`}}.{{.Provider}}.box",
       "type": "vagrant",
       "vagrantfile_template": "ccdc-basebox-windows-server-2019.template"
-    }
+    },
+    [
+      {
+        "type": "vsphere",
+        "host": "{{user `vmware_center_host`}}",
+        "vm_name": "{{user `vmware_center_vm_name`}}",
+        "cluster": "{{user `vmware_center_cluster_name`}}",
+        "datacenter": "{{user `vmware_center_datacenter`}}",
+        "esxi_host": "{{user `vmware_center_esxi_host`}}",
+        "datastore": "{{user `vmware_center_datastore`}}",
+        "disk_mode": "thin",
+        "keep_input_artifact": true,
+        "vm_network": "{{user `vmware_center_vm_network`}}",
+        "vm_folder": "{{user `vmware_center_vm_folder`}}",
+        "overwrite": true,
+        "insecure": true,
+        "username": "{{user `vmware_center_username`}}",
+        "password": "{{user `vmware_center_password`}}"
+      },
+      {
+        "type": "vsphere-template",
+        "host": "{{user `vmware_center_host`}}",
+        "insecure": true,
+        "username": "{{user `vmware_center_username`}}",
+        "password": "{{user `vmware_center_password`}}",
+        "datacenter": "{{user `vmware_center_datacenter`}}",
+        "folder": "/packer-templates/os/windows-2019"
+      }
+    ]
   ],
   "provisioners": [
     {
@@ -127,6 +155,14 @@
       "inline": "Enable-PSRemoting -Force"
     },
     {
+      "environment_vars": [
+        "VAGRANT_USER_FINAL_PASSWORD={{user `vagrant_user_final_password`}}",
+        "CUSTOMISE_FOR_BUILDMACHINE={{user `customise_for_buildmachine`}}"
+      ],
+      "type": "powershell",
+      "scripts": ["./scripts/customisation-for-buildmachines.ps1"]
+    },
+    {
       "scripts": [
         "./scripts/compact.bat"
       ],
@@ -134,6 +170,7 @@
     }
   ],
   "variables": {
+    "customise_for_buildmachine": "0",
     "autounattend": "./answer_files/server-2019/Autounattend.xml",
     "main_os_disk_size": "40000",
     "x_mirror_disk_size": "150000",
@@ -147,7 +184,22 @@
     "iso_url": "https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso",
     "manually_download_iso_from": "https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019",
     "restart_timeout": "5m",
-    "winrm_timeout": "6h"
-  }
+    "winrm_timeout": "6h",
+    "vagrant_user_final_password": "{{env `VAGRANT_USER_FINAL_PASSWORD`}}",
+    "vmware_center_host": "{{env `VMWARECENTER_HOST`}}",
+    "vmware_center_vm_name": "{{env `VMWARECENTER_VM_NAME`}}",
+    "vmware_center_cluster_name": "{{env `VMWARECENTER_CLUSTER_NAME`}}",
+    "vmware_center_datacenter": "{{env `VMWARECENTER_DATACENTER`}}",
+    "vmware_center_esxi_host": "{{env `VMWARECENTER_ESXI_HOST`}}",
+    "vmware_center_datastore": "{{env `VMWARECENTER_DATASTORE`}}",
+    "vmware_center_vm_network": "{{env `VMWARECENTER_VM_NETWORK`}}",
+    "vmware_center_vm_folder": "{{env `VMWARECENTER_VM_FOLDER`}}",
+    "vmware_center_username": "{{env `VMWARECENTER_USERNAME`}}",
+    "vmware_center_password": "{{env `VMWARECENTER_PASSWORD`}}"
+  },
+  "sensitive-variables": [
+    "vmware_center_password",
+    "vagrant_user_final_password"
+  ]
 }
 
