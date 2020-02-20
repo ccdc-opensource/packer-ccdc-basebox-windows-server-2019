@@ -24,6 +24,16 @@ echo 'Removing any left over disk images from previous builds...'
 rm -f ./builds.vmdk
 rm -f ./x_mirror.vmdk
 
+if [[ -f answer_files/Autounattend.xml ]]; then
+  rm answer_files/Autounattend.xml
+fi
+cp answer_files/Autounattend.xml.template answer_files/Autounattend.xml
+
+if [[ ! -x $WINDOWS_PRODUCT_KEY ]]; then
+  echo "Inserting Windows product key in unattended install answer file..."
+  sed -i "s/<\!--<Key><\/Key>-->/<Key>$WINDOWS_PRODUCT_KEY<\/Key>/" answer_files/Autounattend.xml
+fi
+
 echo 'Creating output directory'
 mkdir -p output
 
