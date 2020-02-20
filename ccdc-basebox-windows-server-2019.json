@@ -18,6 +18,8 @@
         "./unattend-floppy-scripts/disable-winrm.ps1",
         "./unattend-floppy-scripts/remoting-for-ansible.ps1",
         "./unattend-floppy-scripts/microsoft-updates.bat",
+        "./unattend-floppy-scripts/unattend.xml",
+        "./unattend-floppy-scripts/sysprep.bat",
         "./unattend-floppy-scripts/win-updates.ps1"
       ],
       "guest_os_type": "windows9srv-64",
@@ -26,13 +28,13 @@
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_url": "{{user `iso_url`}}",
       "memory": "{{user `ram`}}",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "shutdown_command": "a:/sysprep.bat",
       "vmx_data": {
         "RemoteDisplay.vnc.enabled": "false",
         "RemoteDisplay.vnc.port": "5900",
         "virtualHW.version": "13"
       },
-      "vmx_remove_ethernet_interfaces": true,
+      "vmx_remove_ethernet_interfaces": "{{ user `vmx_remove_ethernet_interfaces` }}",
       "vnc_port_max": 5980,
       "vnc_port_min": 5900,
       "winrm_password": "vagrant",
@@ -63,7 +65,9 @@
         "./unattend-floppy-scripts/disable-winrm.ps1",
         "./unattend-floppy-scripts/remoting-for-ansible.ps1",
         "./unattend-floppy-scripts/microsoft-updates.bat",
-        "./unattend-floppy-scripts/win-updates.ps1"
+        "./unattend-floppy-scripts/win-updates.ps1",
+        "./unattend-floppy-scripts/unattend.xml",
+        "./unattend-floppy-scripts/sysprep.bat"
       ],
       "guest_additions_mode": "disable",
       "guest_os_type": "Windows2016_64",
@@ -72,7 +76,7 @@
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_url": "{{user `iso_url`}}",
       "memory": "{{user `ram`}}",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "shutdown_command": "a:/sysprep.bat",
       "winrm_password": "vagrant",
       "winrm_timeout": "{{user `winrm_timeout`}}",
       "winrm_username": "vagrant",
@@ -148,25 +152,11 @@
     },
     {
       "type": "powershell",
-      "inline": "$drv = Get-WmiObject win32_volume -filter 'DriveLetter = \"D:\"'; $drv.DriveLetter = \"F:\" ; $drv.Put() | out-null"
-    },
-    {
-      "type": "powershell",
-      "inline": "Enable-PSRemoting -Force"
-    },
-    {
-      "environment_vars": [
-        "VAGRANT_USER_FINAL_PASSWORD={{user `vagrant_user_final_password`}}",
-        "CUSTOMISE_FOR_BUILDMACHINE={{user `customise_for_buildmachine`}}"
-      ],
-      "type": "powershell",
-      "scripts": ["./scripts/customisation-for-buildmachines.ps1"]
-    },
-    {
       "scripts": [
-        "./scripts/compact.bat"
-      ],
-      "type": "windows-shell"
+        "./scripts/enable-psremoting.ps1",
+        "./scripts/fix-drive-letters.ps1",
+        "./scripts/compact.ps1"
+      ]
     }
   ],
   "variables": {
