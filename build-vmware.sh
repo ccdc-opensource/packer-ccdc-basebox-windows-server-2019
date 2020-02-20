@@ -16,6 +16,16 @@ mkdir -p output
 echo 'cleaning up intermediate output'
 rm -rf ./output//packer-centos-7.7-x86_64-vmware
 
+if [[ -f answer_files/server-2019/Autounattend.xml ]]; then
+  rm answer_files/server-2019/Autounattend.xml
+fi
+cp answer_files/server-2019/Autounattend.xml.template answer_files/server-2019/Autounattend.xml
+
+if [[ ! -x $WINDOWS_PRODUCT_KEY ]]; then
+  echo "Inserting Windows product key in unattended install answer file..."
+  sed -i "s/<\!--<Key><\/Key>-->/<Key>$WINDOWS_PRODUCT_KEY<\/Key>/" answer_files/server-2019/Autounattend.xml
+fi
+
 echo 'building base images'
 $PACKER build \
   -only=vmware-iso \
