@@ -18,7 +18,7 @@ rm -rf ./output//packer-centos-7.7-x86_64-vmware
 
 VAGRANT_USER_FINAL_PASSWORD=vagrant
 sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" ./unattend-floppy-scripts/unattend.xml.template > ./unattend-floppy-scripts/unattend.xml
-#sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" answer_files/server-2019/Autounattend.xml.template > answer_files/server-2019/Autounattend.xml
+sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" answer_files/server-2019/Autounattend.xml.template > answer_files/server-2019/Autounattend.xml
 
 echo 'building base images'
 $PACKER build \
