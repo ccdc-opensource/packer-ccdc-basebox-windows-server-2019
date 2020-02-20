@@ -37,6 +37,7 @@ $PACKER build \
   -var 'cpus=2' \
   -var 'memory=4096' \
   -var 'box_basename=ccdc-basebox/windows-2019' \
+  -var 'vmx_remove_ethernet_interfaces=false' \
   -var 'virtualhw.version=13' \
   ./ccdc-basebox-windows-server-2019.json
 

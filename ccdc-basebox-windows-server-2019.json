@@ -20,7 +20,11 @@
         "./unattend-floppy-scripts/microsoft-updates.bat",
         "./unattend-floppy-scripts/unattend.xml",
         "./unattend-floppy-scripts/sysprep.bat",
-        "./unattend-floppy-scripts/win-updates.ps1"
+        "./unattend-floppy-scripts/win-updates.ps1",
+        "./vmxnet3/vmxnet3.cat",
+        "./vmxnet3/vmxnet3.inf",
+        "./vmxnet3/vmxnet3.sys",
+        "./vmxnet3/vmxnet3ver.dll"
       ],
       "guest_os_type": "windows9srv-64",
       "headless": "{{user `headless`}}",
@@ -44,6 +48,7 @@
       "winrm_use_ssl": true,
       "winrm_use_ntlm": true,
       "version": 14,
+      "network_adapter_type": "VMXNET3",
       "vm_name": "WindowsServer2019"
     },
     {
