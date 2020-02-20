@@ -2,7 +2,7 @@
 # This is the root item in the Hosts and Clusters view in vSphere
 export VMWARECENTER_HOST=""
 # The name the new virtual machine will have on the VMWare UI
-export VMWARECENTER_VM_NAME=""
+export VMWARECENTER_VM_NAME="ccdc-basebox-windows-2019-$(date '+%Y-%m-%d-%H%M')"
 # The name of the datacenter, it's the child item under the root item in the Hosts and Clusters view in vSphere
 export VMWARECENTER_DATACENTER=""
 # The cluster name, it's the child item under the datacenter  in the Hosts and Clusters view in vSphere
@@ -19,3 +19,5 @@ export VMWARECENTER_VM_FOLDER=""
 export VMWARECENTER_USERNAME=""
 # The password used to access vSphere
 export VMWARECENTER_PASSWORD=''
+# Vagrant user's final password
+export VAGRANT_USER_FINAL_PASSWORD='vagrant'

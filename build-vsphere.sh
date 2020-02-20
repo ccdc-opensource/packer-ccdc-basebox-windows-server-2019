@@ -20,6 +20,8 @@ source ./vsphere-environment-do-not-add
 
 echo 'creating output directory'
 mkdir -p output
+echo 'Cleaning output directory'
+rm -rf ./output-vmware-iso
 
 sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" unattend-floppy-scripts/unattend.xml.template > unattend-floppy-scripts/unattend.xml
 sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" answer_files/server-2019/Autounattend.xml.template > answer_files/server-2019/Autounattend.xml
@@ -28,7 +30,7 @@ export PACKER_LOG='1'
 echo 'building base images'
 $PACKER build \
   -only=vmware-iso \
-  -except=vagrant,vsphere,vsphere-template \
+  -except=vagrant \
   -var 'customise_for_buildmachine=1' \
   -var 'build_directory=./output/' \
   -var 'disk_size=400000' \
