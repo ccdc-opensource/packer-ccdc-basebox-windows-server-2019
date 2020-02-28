@@ -53,19 +53,22 @@
     },
     {
       "type": "virtualbox-iso",
-      "boot_wait": "2m",
+      "boot_wait": "30s",
       "communicator": "winrm",
       "cpus": "{{user `cpus`}}",
       "disk_size": "{{user `main_os_disk_size`}}",
+      "hard_drive_discard": true,
+      "hard_drive_interface": "sata",
+      "hard_drive_nonrotational": true,
       "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--firmware", "EFI" ],
         [ "createhd", "--format", "VMDK", "--filename", "x_mirror.vmdk", "--variant", "STREAM", "--size", "{{user `x_mirror_disk_size`}}" ],
         [ "createhd", "--format", "VMDK", "--filename", "builds.vmdk", "--variant", "STREAM", "--size", "{{user `builds_disk_size`}}" ],
-        [ "storagectl", "{{.Name}}", "--name", "SATA Controller", "--add", "sata", "--controller", "IntelAHCI"],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--type", "hdd", "--medium", "x_mirror.vmdk" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "builds.vmdk" ]
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "x_mirror.vmdk" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--medium", "builds.vmdk" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "dvddrive", "--medium", "./output/autounattend.iso" ]
       ],
       "floppy_files": [
-        "{{user `autounattend`}}",
         "./unattend-floppy-scripts/disable-screensaver.ps1",
         "./unattend-floppy-scripts/disable-winrm.ps1",
         "./unattend-floppy-scripts/remoting-for-ansible.ps1",
@@ -74,9 +77,19 @@
         "./unattend-floppy-scripts/unattend.xml",
         "./unattend-floppy-scripts/sysprep.bat"
       ],
+      "boot_command": [
+          "fs0:\\EFI\\BOOT\\BOOTX64.efi",
+          "<enter>",
+          "<enter>",
+          "<enter>",
+          "<enter>",
+          "<enter>",
+          "<enter>"
+      ],
       "guest_additions_mode": "disable",
       "guest_os_type": "Windows2016_64",
       "headless": "{{user `headless`}}",
+      "iso_interface": "sata",
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_url": "{{user `iso_url`}}",
