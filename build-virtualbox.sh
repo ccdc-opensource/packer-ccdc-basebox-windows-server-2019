@@ -31,6 +31,24 @@ VAGRANT_USER_FINAL_PASSWORD=vagrant
 sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" unattend-floppy-scripts/unattend.xml.template > unattend-floppy-scripts/unattend.xml
 sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" answer_files/server-2019/Autounattend.xml.template > answer_files/server-2019/Autounattend.xml
 
+if [[ $(uname) == "Linux" ]]
+then
+  if [[ ! -f /usr/bin/genisoimage ]]
+  then
+    echo "Installing genisoimage, please enter your password"
+    sudo apt install genisoimage
+  fi
+  echo "Creating iso image for autounattend.xml file"
+  genisoimage -v -J -rational-rock -input-charset utf-8 -o - ./answer_files/server-2019/* > ./output/autounattend.iso
+elif [[ $(uname) == "Darwin" ]]
+then
+  echo "Creating iso image for autounattend.xml file"
+  hdiutil makehybrid -o ./output/autounattend.iso ./answer_files/server-2019 -iso -joliet
+else
+  echo "Can't create iso image for autounattend.xml file"
+  exit 1
+fi
+
 echo 'Building base images'
 $PACKER build \
   -only=virtualbox-iso \
