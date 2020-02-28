@@ -40,7 +40,11 @@ then
     sudo apt install genisoimage
   fi
   echo "Creating iso image for autounattend.xml file"
-  genisoimage -v -J -rational-rock -input-charset utf-8 -o - ./answer_files/server-2019/* > ./output/autounattend.iso
+  genisoimage -v -J -rational-rock -input-charset utf-8 -o - \
+    ./answer_files/server-2019 \
+    ./unattend-floppy-scripts \
+    ./vmxnet3 \
+    > ./output/autounattend.iso
 elif [[ $(uname) == "Darwin" ]]
 then
   echo "Creating iso image for autounattend.xml file"

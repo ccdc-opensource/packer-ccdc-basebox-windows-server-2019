@@ -63,23 +63,15 @@
       "vboxmanage": [
         [ "modifyvm", "{{.Name}}", "--firmware", "EFI" ],
         [ "modifyvm", "{{ .Name }}", "--graphicscontroller", "vboxsvga" ],
-        [ "createhd", "--format", "VMDK", "--filename", "x_mirror.vmdk", "--variant", "STREAM", "--size", "{{user `x_mirror_disk_size`}}" ],
-        [ "createhd", "--format", "VMDK", "--filename", "builds.vmdk", "--variant", "STREAM", "--size", "{{user `builds_disk_size`}}" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "x_mirror.vmdk" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--medium", "builds.vmdk" ],
+        [ "modifyvm", "{{.Name}}", "--vram", "64" ],
+        [ "createmedium", "disk", "--filename", "x_mirror.vmdk", "--size", "{{user `x_mirror_disk_size`}}" ],
+        [ "createmedium", "disk", "--filename", "builds.vmdk", "--size", "{{user `builds_disk_size`}}" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--mtype", "writethrough", "--medium", "x_mirror.vmdk" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--mtype", "writethrough", "--medium", "builds.vmdk" ],
         [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "dvddrive", "--medium", "./output/autounattend.iso" ]
       ],
       "vboxmanage_post": [
         [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--medium", "none" ]
-      ],
-      "floppy_files": [
-        "./unattend-floppy-scripts/disable-screensaver.ps1",
-        "./unattend-floppy-scripts/disable-winrm.ps1",
-        "./unattend-floppy-scripts/remoting-for-ansible.ps1",
-        "./unattend-floppy-scripts/microsoft-updates.bat",
-        "./unattend-floppy-scripts/win-updates.ps1",
-        "./unattend-floppy-scripts/unattend.xml",
-        "./unattend-floppy-scripts/sysprep.bat"
       ],
       "boot_command": [
           "fs0:\\EFI\\BOOT\\BOOTX64.efi",
@@ -98,7 +90,7 @@
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_url": "{{user `iso_url`}}",
       "memory": "{{user `ram`}}",
-      "shutdown_command": "a:/sysprep.bat",
+      "shutdown_command": "g:/sysprep.bat",
       "winrm_password": "{{user `vagrant_user_final_password`}}",
       "winrm_timeout": "{{user `winrm_timeout`}}",
       "winrm_username": "vagrant",
