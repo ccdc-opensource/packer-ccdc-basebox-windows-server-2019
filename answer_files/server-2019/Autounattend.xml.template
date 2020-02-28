@@ -15,36 +15,60 @@
         <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
             <DiskConfiguration>
                 <Disk wcm:action="add">
+                    <DiskID>0</DiskID>
+                    <WillWipeDisk>true</WillWipeDisk>
                     <CreatePartitions>
                         <CreatePartition wcm:action="add">
-                            <Type>Primary</Type>
+                        <!-- Create the EFI partition -->
                             <Order>1</Order>
-                            <Size>350</Size>
+                            <Type>EFI</Type>
+                            <Size>100</Size>
                         </CreatePartition>
+                        <!-- Create the Recovery partition -->
                         <CreatePartition wcm:action="add">
                             <Order>2</Order>
+                            <Type>Primary</Type>
+                            <Size>300</Size>
+                        </CreatePartition>
+                        <CreatePartition wcm:action="add">
+                        <!-- Create the MSR partition -->
+                            <Order>3</Order>
+                            <Type>MSR</Type>
+                            <Size>128</Size>
+                        </CreatePartition>
+                        <!-- Create the Windows partition and fill the rest of the hard disk -->
+                        <CreatePartition wcm:action="add">
+                            <Order>4</Order>
                             <Type>Primary</Type>
                             <Extend>true</Extend>
                         </CreatePartition>
                     </CreatePartitions>
                     <ModifyPartitions>
+                        <!-- Modify the EFI partition -->
                         <ModifyPartition wcm:action="add">
-                            <Active>true</Active>
-                            <Format>NTFS</Format>
-                            <Label>boot</Label>
                             <Order>1</Order>
                             <PartitionID>1</PartitionID>
+                            <Format>FAT32</Format>
+                            <Label>System</Label>
                         </ModifyPartition>
+                        <!-- Modify the recovery partition -->
                         <ModifyPartition wcm:action="add">
+                            <Order>2</Order>
+                            <PartitionID>2</PartitionID>
+                            <Format>NTFS</Format>
+                            <Label>WINRE</Label>
+                            <TypeID>de94bba4-06d1-4d40-a16a-bfd50179d6ac</TypeID>
+                        </ModifyPartition>
+                        <!-- The MSR partition does not need to be modified -->
+                        <!-- Modify the Windows partition -->
+                        <ModifyPartition wcm:action="add">
+                            <Order>3</Order>
+                            <PartitionID>4</PartitionID>
                             <Format>NTFS</Format>
                             <Label>Windows 2019</Label>
                             <Letter>C</Letter>
-                            <Order>2</Order>
-                            <PartitionID>2</PartitionID>
                         </ModifyPartition>
                     </ModifyPartitions>
-                    <DiskID>0</DiskID>
-                    <WillWipeDisk>true</WillWipeDisk>
                 </Disk>
                 <Disk wcm:action="add">
                     <CreatePartitions>
