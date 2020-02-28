@@ -14,6 +14,7 @@ fi
 
 echo 'Cleaning existing output...'
 rm -rf ./output-virtualbox-iso
+rm -f ./output/autounattend.iso
 # rm -rf ./output/packer-windows-virtualbox
 EXISTINGVM="$( "$VBOXMANAGE" list vms | grep packer-virtualbox-iso | sed -e 's/\ .*//' | sed -e 's/"//g' )"
 if [[ $EXISTINGVM != "" ]]; then
