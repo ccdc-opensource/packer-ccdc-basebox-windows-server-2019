@@ -37,7 +37,7 @@ $PACKER build \
   -except=vsphere,vsphere-template \
   -var 'vhv_enable=true' \
   -var 'build_directory=./output/' \
-  -var 'disk_size=400000' \
+  -var 'disk_size=800000' \
   -var 'cpus=2' \
   -var 'memory=4096' \
   -var 'box_basename=ccdc-basebox/windows-2019' \
