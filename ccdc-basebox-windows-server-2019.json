@@ -62,6 +62,7 @@
       "hard_drive_nonrotational": true,
       "vboxmanage": [
         [ "modifyvm", "{{.Name}}", "--firmware", "EFI" ],
+        [ "modifyvm", "{{ .Name }}", "--graphicscontroller", "vboxsvga" ],
         [ "createhd", "--format", "VMDK", "--filename", "x_mirror.vmdk", "--variant", "STREAM", "--size", "{{user `x_mirror_disk_size`}}" ],
         [ "createhd", "--format", "VMDK", "--filename", "builds.vmdk", "--variant", "STREAM", "--size", "{{user `builds_disk_size`}}" ],
         [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "x_mirror.vmdk" ],
