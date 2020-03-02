@@ -28,7 +28,7 @@ rm -f ./x_mirror.vmdk
 echo 'Creating output directory'
 mkdir -p output
 
-VAGRANT_USER_FINAL_PASSWORD=vagrant
+export VAGRANT_USER_FINAL_PASSWORD=vagrant
 sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" unattend-floppy-scripts/unattend.xml.template > unattend-floppy-scripts/unattend.xml
 sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" answer_files/server-2019/Autounattend.xml.template > answer_files/server-2019/Autounattend.xml
 
@@ -58,9 +58,7 @@ echo 'Building base images'
 $PACKER build \
   -only=virtualbox-iso \
   -except=vsphere,vsphere-template \
-  -var 'vhv_enable=true' \
   -var 'build_directory=./output/' \
-  -var 'disk_size=800000' \
   -var 'cpus=2' \
   -var 'memory=4096' \
   -var 'box_basename=ccdc-basebox/windows-2019' \

@@ -33,7 +33,6 @@ $PACKER build \
   -except=vagrant \
   -var 'customise_for_buildmachine=1' \
   -var 'build_directory=./output/' \
-  -var 'disk_size=800000' \
   -var 'cpus=2' \
   -var 'memory=4096' \
   -var 'box_basename=ccdc-basebox/windows-2019' \

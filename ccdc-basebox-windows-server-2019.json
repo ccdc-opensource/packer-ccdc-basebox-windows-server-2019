@@ -57,17 +57,15 @@
       "communicator": "winrm",
       "cpus": "{{user `cpus`}}",
       "disk_size": "{{user `main_os_disk_size`}}",
-      "hard_drive_discard": true,
       "hard_drive_interface": "sata",
-      "hard_drive_nonrotational": true,
       "vboxmanage": [
         [ "modifyvm", "{{.Name}}", "--firmware", "EFI" ],
         [ "modifyvm", "{{ .Name }}", "--graphicscontroller", "vboxsvga" ],
         [ "modifyvm", "{{.Name}}", "--vram", "64" ],
-        [ "createmedium", "disk", "--filename", "x_mirror.vmdk", "--size", "{{user `x_mirror_disk_size`}}" ],
-        [ "createmedium", "disk", "--filename", "builds.vmdk", "--size", "{{user `builds_disk_size`}}" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--mtype", "writethrough", "--medium", "x_mirror.vmdk" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--mtype", "writethrough", "--medium", "builds.vmdk" ],
+        [ "createmedium", "disk", "--filename", "output-virtualbox-iso/x_mirror.vdi", "--size", "{{user `x_mirror_disk_size`}}" ],
+        [ "createmedium", "disk", "--filename", "output-virtualbox-iso/builds.vdi", "--size", "{{user `builds_disk_size`}}" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--mtype", "writethrough", "--medium", "output-virtualbox-iso/x_mirror.vdi" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--mtype", "writethrough", "--medium", "output-virtualbox-iso/builds.vdi" ],
         [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "dvddrive", "--medium", "./output/autounattend.iso" ]
       ],
       "vboxmanage_post": [
@@ -176,7 +174,7 @@
   "variables": {
     "customise_for_buildmachine": "0",
     "autounattend": "./answer_files/server-2019/Autounattend.xml",
-    "main_os_disk_size": "40000",
+    "main_os_disk_size": "80000",
     "x_mirror_disk_size": "150000",
     "builds_disk_size": "150000",
     "disk_type_id": "1",
