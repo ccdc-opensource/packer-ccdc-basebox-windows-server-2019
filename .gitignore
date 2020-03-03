@@ -3,7 +3,9 @@
 /output-virtualbox-iso
 /output
 *.vmdk
+*.vdi
 *.box
 vsphere-environment-do-not-add
 unattend-floppy-scripts/unattend.xml
 answer_files/server-2019/Autounattend.xml
+.DS_Store
