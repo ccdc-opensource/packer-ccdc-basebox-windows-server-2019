@@ -2,6 +2,7 @@
   "builders": [
     {
       "type": "vmware-iso",
+      "output_directory": "{{user `output_directory`}}",
       "boot_wait": "1s",
       "boot_command": [
         "<enter>","<wait>","<enter>",
@@ -10,8 +11,8 @@
         "<enter>","<wait>","<enter>",
         "<enter>","<wait>","<enter>",
         "<enter>"
-    ],
-    "communicator": "winrm",
+      ],
+      "communicator": "winrm",
       "cpus": "{{user `cpus`}}",
       "disk_adapter_type": "pvscsi",
       "disk_size": "{{user `main_os_disk_size`}}",
@@ -58,6 +59,7 @@
     },
     {
       "type": "virtualbox-iso",
+      "output_directory": "{{user `output_directory`}}",
       "boot_wait": "30s",
       "communicator": "winrm",
       "cpus": "{{user `cpus`}}",
@@ -67,10 +69,10 @@
         [ "modifyvm", "{{.Name}}", "--firmware", "EFI" ],
         [ "modifyvm", "{{ .Name }}", "--graphicscontroller", "vboxsvga" ],
         [ "modifyvm", "{{.Name}}", "--vram", "64" ],
-        [ "createmedium", "disk", "--filename", "output-virtualbox-iso/x_mirror.vdi", "--size", "{{user `x_mirror_disk_size`}}" ],
-        [ "createmedium", "disk", "--filename", "output-virtualbox-iso/builds.vdi", "--size", "{{user `builds_disk_size`}}" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--mtype", "writethrough", "--medium", "output-virtualbox-iso/x_mirror.vdi" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--mtype", "writethrough", "--medium", "output-virtualbox-iso/builds.vdi" ],
+        [ "createmedium", "disk", "--filename", "{{user `output_directory`}}/x_mirror-{{ timestamp }}.vdi", "--size", "{{user `x_mirror_disk_size`}}" ],
+        [ "createmedium", "disk", "--filename", "{{user `output_directory`}}/builds-{{ timestamp }}.vdi", "--size", "{{user `builds_disk_size`}}" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--mtype", "writethrough", "--medium", "{{user `output_directory`}}/x_mirror-{{ timestamp }}.vdi" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--mtype", "writethrough", "--medium", "{{user `output_directory`}}/builds-{{ timestamp }}.vdi" ],
         [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "dvddrive", "--medium", "{{user `autounattend_iso`}}" ]
       ],
       "vboxmanage_post": [
@@ -179,6 +181,8 @@
     "customise_for_buildmachine": "0",
     "autounattend": "./answer_files/server-2019/Autounattend.xml",
     "autounattend_iso":"{{env `AUTOUNATTEND_ISO`}}",
+    "build_directory":"{{env `VAGRANT_OUTPUT`}}",
+    "output_directory":"{{env `VAGRANT_OUTPUT`}}/packer-output",
     "main_os_disk_size": "80000",
     "x_mirror_disk_size": "150000",
     "builds_disk_size": "150000",

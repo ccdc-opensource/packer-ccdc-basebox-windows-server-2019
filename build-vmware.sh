@@ -10,28 +10,29 @@ else
   PACKER="packer"
 fi
 
-export AUTOUNATTEND_ISO=$PWD/output/autounattend.iso
+export VMVARIANT=vmware
+export OUTPUTDIR=$PWD/output/$VMVARIANT
+export AUTOUNATTEND_ISO=$OUTPUTDIR/autounattend.iso
+export AUTOUNATTEND_ISO_SOURCE=$OUTPUTDIR/autounattend-iso-source
+export VAGRANT_OUTPUT=$OUTPUTDIR/packer
+export VAGRANT_USER_FINAL_PASSWORD=vagrant
 
 echo 'Cleaning existing output...'
-rm -rf ./output-vmware-iso
-rm -f $AUTOUNATTEND_ISO
-rm -rf ./output/autounattend-iso-source
-rm -rf ./output/packer-windows-2019-vmware
+rm -f $OUTPUTDIR
 
-echo 'creating output directory'
-mkdir -p output
-
-export VAGRANT_USER_FINAL_PASSWORD=vagrant
-sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" ./unattend-floppy-scripts/unattend.xml.template > ./unattend-floppy-scripts/unattend.xml
-sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" answer_files/server-2019/Autounattend.xml.template > answer_files/server-2019/Autounattend.xml
+echo 'Creating output directory'
+mkdir -p $OUTPUTDIR
 
 echo 'copying scripts and autounattend files'
-mkdir -p ./output/autounattend-iso-source
-cp ./answer_files/server-2019/* ./output/autounattend-iso-source/
-cp ./unattend-floppy-scripts/* ./output/autounattend-iso-source/
-cp ./vmxnet3/* ./output/autounattend-iso-source/
-mkdir -p './output/autounattend-iso-source/$WinpeDriver$'
-cp -R ./pvscsi './output/autounattend-iso-source/$WinpeDriver$/'
+mkdir -p $AUTOUNATTEND_ISO_SOURCE
+cp ./answer_files/server-2019/* $AUTOUNATTEND_ISO_SOURCE/
+cp ./unattend-floppy-scripts/* $AUTOUNATTEND_ISO_SOURCE/
+cp ./vmxnet3/* $AUTOUNATTEND_ISO_SOURCE/
+mkdir -p "$AUTOUNATTEND_ISO_SOURCE/\$WinpeDriver\$"
+cp -R ./pvscsi "$AUTOUNATTEND_ISO_SOURCE/\$WinpeDriver\$"
+
+sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" $AUTOUNATTEND_ISO_SOURCE/unattend.xml.template > $AUTOUNATTEND_ISO_SOURCE/unattend.xml
+sed -e "s#<Value>vagrant</Value>#<Value>$VAGRANT_USER_FINAL_PASSWORD</Value>#" $AUTOUNATTEND_ISO_SOURCE/Autounattend.xml.template > $AUTOUNATTEND_ISO_SOURCE/Autounattend.xml
 
 if [[ $(uname) == "Linux" ]]
 then
@@ -42,12 +43,12 @@ then
   fi
   echo "Creating iso image for autounattend.xml file"
   genisoimage -v -J -rational-rock -input-charset utf-8 -o - \
-    output/autounattend-iso-source/ \
+    $AUTOUNATTEND_ISO_SOURCE/ \
     > $AUTOUNATTEND_ISO
 elif [[ $(uname) == "Darwin" ]]
 then
   echo "Creating iso image for autounattend.xml file"
-  hdiutil makehybrid -o $AUTOUNATTEND_ISO output/autounattend-iso-source/ -iso -joliet
+  hdiutil makehybrid -o $AUTOUNATTEND_ISO $AUTOUNATTEND_ISO_SOURCE/ -iso -joliet
 else
   echo "Can't create iso image for autounattend.xml file"
   exit 1
@@ -59,7 +60,6 @@ echo 'building base images'
 $PACKER build \
   -only=vmware-iso \
   -except=vsphere,vsphere-template \
-  -var 'build_directory=./output/' \
   -var 'cpus=2' \
   -var 'memory=4096' \
   -var 'box_basename=ccdc-basebox/windows-2019' \
@@ -67,4 +67,4 @@ $PACKER build \
   ./ccdc-basebox-windows-server-2019.json
 
 
-mv output/ccdc-basebox/windows-2019.vmware.box output/ccdc-basebox/windows-2019.$(date +%Y%m%d).0.vmware_desktop.box
+mv $VAGRANT_OUTPUT/ccdc-basebox/windows-2019.vmware.box $VAGRANT_OUTPUT/ccdc-basebox/windows-2019.$(date +%Y%m%d).0.vmware_desktop.box
