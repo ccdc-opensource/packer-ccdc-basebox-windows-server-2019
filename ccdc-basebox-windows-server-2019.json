@@ -2,41 +2,47 @@
   "builders": [
     {
       "type": "vmware-iso",
-      "boot_wait": "2m",
+      "output_directory": "{{user `output_directory`}}",
+      "boot_wait": "1s",
+      "boot_command": [
+        "<enter>","<wait>","<enter>",
+        "<enter>","<wait>","<enter>",
+        "<enter>","<wait>","<enter>",
+        "<enter>","<wait>","<enter>",
+        "<enter>","<wait>","<enter>",
+        "<enter>"
+      ],
       "communicator": "winrm",
       "cpus": "{{user `cpus`}}",
-      "disk_adapter_type": "lsisas1068",
+      "disk_adapter_type": "pvscsi",
       "disk_size": "{{user `main_os_disk_size`}}",
       "disk_additional_size": [
         "{{user `x_mirror_disk_size`}}",
         "{{user `builds_disk_size`}}"
       ],
       "disk_type_id": "{{user `disk_type_id`}}",
-      "floppy_files": [
-        "{{user `autounattend`}}",
-        "./unattend-floppy-scripts/disable-screensaver.ps1",
-        "./unattend-floppy-scripts/disable-winrm.ps1",
-        "./unattend-floppy-scripts/remoting-for-ansible.ps1",
-        "./unattend-floppy-scripts/microsoft-updates.bat",
-        "./unattend-floppy-scripts/unattend.xml",
-        "./unattend-floppy-scripts/sysprep.bat",
-        "./unattend-floppy-scripts/win-updates.ps1",
-        "./vmxnet3/vmxnet3.cat",
-        "./vmxnet3/vmxnet3.inf",
-        "./vmxnet3/vmxnet3.sys",
-        "./vmxnet3/vmxnet3ver.dll"
-      ],
       "guest_os_type": "windows9srv-64",
       "headless": "{{user `headless`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_url": "{{user `iso_url`}}",
       "memory": "{{user `ram`}}",
-      "shutdown_command": "a:/sysprep.bat",
+      "shutdown_command": "G:/sysprep.bat",
       "vmx_data": {
         "RemoteDisplay.vnc.enabled": "false",
         "RemoteDisplay.vnc.port": "5900",
-        "virtualHW.version": "13"
+        "virtualHW.version": "13",
+        "firmware": "efi",
+        "ide0:1.devicetype": "cdrom-image",
+        "ide0:1.filename": "{{user `autounattend_iso`}}",
+        "ide0:1.present": "TRUE",
+        "ide0:1.startConnected" :"TRUE"
+      },
+      "vmx_data_post": {
+        "ide0:1.devicetype": "cdrom-image",
+        "ide0:1.filename": "",
+        "ide0:1.present": "FALSE",
+        "ide0:1.startConnected" :"FALSE"
       },
       "vmx_remove_ethernet_interfaces": "{{ user `vmx_remove_ethernet_interfaces` }}",
       "vnc_port_max": 5980,
@@ -53,35 +59,43 @@
     },
     {
       "type": "virtualbox-iso",
-      "boot_wait": "2m",
+      "output_directory": "{{user `output_directory`}}",
+      "boot_wait": "30s",
       "communicator": "winrm",
       "cpus": "{{user `cpus`}}",
       "disk_size": "{{user `main_os_disk_size`}}",
+      "hard_drive_interface": "sata",
       "vboxmanage": [
-        [ "createhd", "--format", "VMDK", "--filename", "x_mirror.vmdk", "--variant", "STREAM", "--size", "{{user `x_mirror_disk_size`}}" ],
-        [ "createhd", "--format", "VMDK", "--filename", "builds.vmdk", "--variant", "STREAM", "--size", "{{user `builds_disk_size`}}" ],
-        [ "storagectl", "{{.Name}}", "--name", "SATA Controller", "--add", "sata", "--controller", "IntelAHCI"],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--type", "hdd", "--medium", "x_mirror.vmdk" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "builds.vmdk" ]
+        [ "modifyvm", "{{.Name}}", "--firmware", "EFI" ],
+        [ "modifyvm", "{{ .Name }}", "--graphicscontroller", "vboxsvga" ],
+        [ "modifyvm", "{{.Name}}", "--vram", "64" ],
+        [ "createmedium", "disk", "--filename", "{{user `output_directory`}}/x_mirror-{{ timestamp }}.vdi", "--size", "{{user `x_mirror_disk_size`}}" ],
+        [ "createmedium", "disk", "--filename", "{{user `output_directory`}}/builds-{{ timestamp }}.vdi", "--size", "{{user `builds_disk_size`}}" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--mtype", "writethrough", "--medium", "{{user `output_directory`}}/x_mirror-{{ timestamp }}.vdi" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--mtype", "writethrough", "--medium", "{{user `output_directory`}}/builds-{{ timestamp }}.vdi" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "dvddrive", "--medium", "{{user `autounattend_iso`}}" ]
       ],
-      "floppy_files": [
-        "{{user `autounattend`}}",
-        "./unattend-floppy-scripts/disable-screensaver.ps1",
-        "./unattend-floppy-scripts/disable-winrm.ps1",
-        "./unattend-floppy-scripts/remoting-for-ansible.ps1",
-        "./unattend-floppy-scripts/microsoft-updates.bat",
-        "./unattend-floppy-scripts/win-updates.ps1",
-        "./unattend-floppy-scripts/unattend.xml",
-        "./unattend-floppy-scripts/sysprep.bat"
+      "vboxmanage_post": [
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--medium", "none" ]
+      ],
+      "boot_command": [
+          "fs0:\\EFI\\BOOT\\BOOTX64.efi",
+          "<enter>",
+          "<enter>",
+          "<enter>",
+          "<enter>",
+          "<enter>",
+          "<enter>"
       ],
       "guest_additions_mode": "disable",
-      "guest_os_type": "Windows2016_64",
+      "guest_os_type": "Windows2019_64",
       "headless": "{{user `headless`}}",
+      "iso_interface": "sata",
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_url": "{{user `iso_url`}}",
       "memory": "{{user `ram`}}",
-      "shutdown_command": "a:/sysprep.bat",
+      "shutdown_command": "g:/sysprep.bat",
       "winrm_password": "{{user `vagrant_user_final_password`}}",
       "winrm_timeout": "{{user `winrm_timeout`}}",
       "winrm_username": "vagrant",
@@ -159,7 +173,6 @@
       "type": "powershell",
       "scripts": [
         "./scripts/enable-psremoting.ps1",
-        "./scripts/fix-drive-letters.ps1",
         "./scripts/compact.ps1"
       ]
     }
@@ -167,7 +180,10 @@
   "variables": {
     "customise_for_buildmachine": "0",
     "autounattend": "./answer_files/server-2019/Autounattend.xml",
-    "main_os_disk_size": "40000",
+    "autounattend_iso":"{{env `AUTOUNATTEND_ISO`}}",
+    "build_directory":"{{env `VAGRANT_OUTPUT`}}",
+    "output_directory":"{{env `VAGRANT_OUTPUT`}}/packer-output",
+    "main_os_disk_size": "80000",
     "x_mirror_disk_size": "150000",
     "builds_disk_size": "150000",
     "disk_type_id": "1",
