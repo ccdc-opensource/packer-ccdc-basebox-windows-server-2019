@@ -67,8 +67,10 @@
       "hard_drive_interface": "sata",
       "vboxmanage": [
         [ "modifyvm", "{{.Name}}", "--firmware", "EFI" ],
-        [ "modifyvm", "{{ .Name }}", "--graphicscontroller", "vboxsvga" ],
+        [ "modifyvm", "{{.Name}}", "--clipboard-mode", "bidirectional" ],
+        [ "modifyvm", "{{.Name}}", "--graphicscontroller", "vmsvga"] ,
         [ "modifyvm", "{{.Name}}", "--vram", "64" ],
+        [ "modifyvm", "{{.Name}}", "--accelerate3d", "on" ],
         [ "createmedium", "disk", "--filename", "{{user `output_directory`}}/x_mirror-{{ timestamp }}.vdi", "--size", "{{user `x_mirror_disk_size`}}" ],
         [ "createmedium", "disk", "--filename", "{{user `output_directory`}}/builds-{{ timestamp }}.vdi", "--size", "{{user `builds_disk_size`}}" ],
         [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--mtype", "writethrough", "--medium", "{{user `output_directory`}}/x_mirror-{{ timestamp }}.vdi" ],
