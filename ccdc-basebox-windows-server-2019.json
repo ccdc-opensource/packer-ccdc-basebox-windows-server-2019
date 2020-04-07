@@ -146,10 +146,32 @@
     {
       "scripts": [
         "./scripts/install7z.bat",
-        "./scripts/vm-guest-tools.bat",
-        "./scripts/enable-rdp.bat"
+        "./scripts/vm-guest-tools.bat"
       ],
       "type": "windows-shell"
+    },
+    {
+      "restart_timeout": "{{user `restart_timeout`}}",
+      "type": "windows-restart",
+      "pause_before": "15s"
+    },
+    {
+      "scripts": [
+        "./scripts/vm-guest-tools-cleanup.bat"
+      ],
+      "type": "windows-shell"
+    },
+    {
+      "restart_timeout": "{{user `restart_timeout`}}",
+      "type": "windows-restart",
+      "pause_before": "5s"
+    },
+    {
+      "scripts": [
+        "./scripts/enable-rdp.bat"
+      ],
+      "type": "windows-shell",
+      "pause_before": "15s"
     },
     {
       "scripts": [
