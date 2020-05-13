@@ -22,4 +22,4 @@ PROVIDER="virtualbox"
 BOX_VERSION="$(date +%Y%m%d).0"
 FILENAME=$BOX_NAME.$BOX_VERSION.$PROVIDER.box
 PATH_TO_FILE=$VAGRANT_OUTPUT/$FILENAME
-curl -H "X-JFrog-Art-Api:$ARTIFACTORY_API_KEY" -T $PATH_TO_FILE "https://artifactory.ccdc.cam.ac.uk/ccdc-vagrant-repo/$FILENAME;box_name=$BOX_NAME;box_provider=$PROVIDER;box_version=$BOX_VERSION"
+curl -H "X-JFrog-Art-Api:$ARTIFACTORY_API_KEY" -T $PATH_TO_FILE "https://artifactory.ccdc.cam.ac.uk/artifactory/ccdc-vagrant-repo/$FILENAME;box_name=$BOX_NAME;box_provider=$PROVIDER;box_version=$BOX_VERSION"
