@@ -78,7 +78,7 @@
         [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "dvddrive", "--medium", "{{user `autounattend_iso`}}" ]
       ],
       "vboxmanage_post": [
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--medium", "none" ]
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--medium", "emptydrive" ]
       ],
       "boot_command": [
           "fs0:\\EFI\\BOOT\\BOOTX64.efi",
