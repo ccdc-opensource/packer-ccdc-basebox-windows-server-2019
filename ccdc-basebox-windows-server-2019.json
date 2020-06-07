@@ -209,7 +209,7 @@
     "output_directory":"{{env `VAGRANT_OUTPUT`}}/packer-output",
     "main_os_disk_size": "80000",
     "x_mirror_disk_size": "150000",
-    "builds_disk_size": "150000",
+    "builds_disk_size": "300000",
     "disk_type_id": "1",
     "cpus": "8",
     "ram": "4096",
