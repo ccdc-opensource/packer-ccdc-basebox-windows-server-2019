@@ -78,7 +78,7 @@
         [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "dvddrive", "--medium", "{{user `autounattend_iso`}}" ]
       ],
       "vboxmanage_post": [
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--medium", "none" ]
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--medium", "emptydrive" ]
       ],
       "boot_command": [
           "fs0:\\EFI\\BOOT\\BOOTX64.efi",
@@ -209,7 +209,7 @@
     "output_directory":"{{env `VAGRANT_OUTPUT`}}/packer-output",
     "main_os_disk_size": "80000",
     "x_mirror_disk_size": "150000",
-    "builds_disk_size": "150000",
+    "builds_disk_size": "300000",
     "disk_type_id": "1",
     "cpus": "8",
     "ram": "4096",
