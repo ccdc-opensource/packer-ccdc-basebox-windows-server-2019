@@ -1,9 +1,6 @@
 {
   "builders": [
     {
-      "type": "vmware-iso",
-      "output_directory": "{{user `output_directory`}}",
-      "boot_wait": "1s",
       "boot_command": [
         "<enter>","<wait>","<enter>",
         "<enter>","<wait>","<enter>",
@@ -12,74 +9,54 @@
         "<enter>","<wait>","<enter>",
         "<enter>"
       ],
+      "boot_wait": "1s",
       "communicator": "winrm",
       "cpus": "{{user `cpus`}}",
       "disk_adapter_type": "pvscsi",
-      "disk_size": "{{user `main_os_disk_size`}}",
       "disk_additional_size": [
         "{{user `x_mirror_disk_size`}}",
         "{{user `builds_disk_size`}}"
       ],
+      "disk_size": "{{user `main_os_disk_size`}}",
       "disk_type_id": "{{user `disk_type_id`}}",
       "guest_os_type": "windows9srv-64",
       "headless": "{{user `headless`}}",
-      "iso_checksum": "{{user `iso_checksum`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
       "iso_url": "{{user `iso_url`}}",
       "memory": "{{user `ram`}}",
+      "network_adapter_type": "VMXNET3",
+      "output_directory": "{{user `output_directory`}}",
       "shutdown_command": "G:/sysprep.bat",
+      "type": "vmware-iso",
+      "version": 14,
+      "vm_name": "WindowsServer2019",
       "vmx_data": {
         "RemoteDisplay.vnc.enabled": "false",
         "RemoteDisplay.vnc.port": "5900",
-        "virtualHW.version": "13",
         "firmware": "efi",
         "ide0:1.devicetype": "cdrom-image",
         "ide0:1.filename": "{{user `autounattend_iso`}}",
         "ide0:1.present": "TRUE",
-        "ide0:1.startConnected" :"TRUE"
+        "ide0:1.startConnected": "TRUE",
+        "virtualHW.version": "13"
       },
       "vmx_data_post": {
         "ide0:1.devicetype": "cdrom-image",
         "ide0:1.filename": "",
         "ide0:1.present": "FALSE",
-        "ide0:1.startConnected" :"FALSE"
+        "ide0:1.startConnected": "FALSE"
       },
       "vmx_remove_ethernet_interfaces": "{{ user `vmx_remove_ethernet_interfaces` }}",
       "vnc_port_max": 5980,
       "vnc_port_min": 5900,
+      "winrm_insecure": true,
       "winrm_password": "{{user `vagrant_user_final_password`}}",
       "winrm_timeout": "{{user `winrm_timeout`}}",
-      "winrm_username": "vagrant",
-      "winrm_insecure": true,
-      "winrm_use_ssl": true,
       "winrm_use_ntlm": true,
-      "version": 14,
-      "network_adapter_type": "VMXNET3",
-      "vm_name": "WindowsServer2019"
+      "winrm_use_ssl": true,
+      "winrm_username": "vagrant"
     },
     {
-      "type": "virtualbox-iso",
-      "output_directory": "{{user `output_directory`}}",
-      "boot_wait": "30s",
-      "communicator": "winrm",
-      "cpus": "{{user `cpus`}}",
-      "disk_size": "{{user `main_os_disk_size`}}",
-      "hard_drive_interface": "sata",
-      "vboxmanage": [
-        [ "modifyvm", "{{.Name}}", "--firmware", "EFI" ],
-        [ "modifyvm", "{{.Name}}", "--clipboard-mode", "bidirectional" ],
-        [ "modifyvm", "{{.Name}}", "--graphicscontroller", "vmsvga"] ,
-        [ "modifyvm", "{{.Name}}", "--vram", "64" ],
-        [ "modifyvm", "{{.Name}}", "--accelerate3d", "on" ],
-        [ "createmedium", "disk", "--filename", "{{user `output_directory`}}/x_mirror-{{ timestamp }}.vdi", "--size", "{{user `x_mirror_disk_size`}}" ],
-        [ "createmedium", "disk", "--filename", "{{user `output_directory`}}/builds-{{ timestamp }}.vdi", "--size", "{{user `builds_disk_size`}}" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--mtype", "writethrough", "--medium", "{{user `output_directory`}}/x_mirror-{{ timestamp }}.vdi" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--mtype", "writethrough", "--medium", "{{user `output_directory`}}/builds-{{ timestamp }}.vdi" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "dvddrive", "--medium", "{{user `autounattend_iso`}}" ]
-      ],
-      "vboxmanage_post": [
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--medium", "emptydrive" ]
-      ],
       "boot_command": [
           "fs0:\\EFI\\BOOT\\BOOTX64.efi",
           "<enter>",
@@ -89,21 +66,127 @@
           "<enter>",
           "<enter>"
       ],
+      "boot_wait": "30s",
+      "communicator": "winrm",
+      "cpus": "{{user `cpus`}}",
+      "disk_size": "{{user `main_os_disk_size`}}",
       "guest_additions_mode": "disable",
       "guest_os_type": "Windows2019_64",
+      "hard_drive_interface": "sata",
       "headless": "{{user `headless`}}",
+      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
       "iso_interface": "sata",
-      "iso_checksum": "{{user `iso_checksum`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_url": "{{user `iso_url`}}",
       "memory": "{{user `ram`}}",
+      "output_directory": "{{user `output_directory`}}",
       "shutdown_command": "g:/sysprep.bat",
+      "type": "virtualbox-iso",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--firmware",
+          "EFI"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--clipboard-mode",
+          "bidirectional"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--graphicscontroller",
+          "vmsvga"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "64"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--accelerate3d",
+          "on"
+        ],
+        [
+          "createmedium",
+          "disk",
+          "--filename",
+          "{{user `output_directory`}}/x_mirror-{{ timestamp }}.vdi",
+          "--size",
+          "{{user `x_mirror_disk_size`}}"
+        ],
+        [
+          "createmedium",
+          "disk",
+          "--filename",
+          "{{user `output_directory`}}/builds-{{ timestamp }}.vdi",
+          "--size",
+          "{{user `builds_disk_size`}}"
+        ],
+        [
+          "storageattach",
+          "{{.Name}}",
+          "--storagectl",
+          "SATA Controller",
+          "--port",
+          "2",
+          "--type",
+          "hdd",
+          "--mtype",
+          "writethrough",
+          "--medium",
+          "{{user `output_directory`}}/x_mirror-{{ timestamp }}.vdi"
+        ],
+        [
+          "storageattach",
+          "{{.Name}}",
+          "--storagectl",
+          "SATA Controller",
+          "--port",
+          "3",
+          "--type",
+          "hdd",
+          "--mtype",
+          "writethrough",
+          "--medium",
+          "{{user `output_directory`}}/builds-{{ timestamp }}.vdi"
+        ],
+        [
+          "storageattach",
+          "{{.Name}}",
+          "--storagectl",
+          "SATA Controller",
+          "--port",
+          "4",
+          "--type",
+          "dvddrive",
+          "--medium",
+          "{{user `autounattend_iso`}}"
+        ]
+      ],
+      "vboxmanage_post": [
+        [
+          "storageattach",
+          "{{.Name}}",
+          "--storagectl",
+          "SATA Controller",
+          "--port",
+          "4",
+          "--medium",
+          "emptydrive"
+        ]
+      ],
+      "winrm_insecure": true,
       "winrm_password": "{{user `vagrant_user_final_password`}}",
       "winrm_timeout": "{{user `winrm_timeout`}}",
-      "winrm_username": "vagrant",
-      "winrm_insecure": true,
+      "winrm_use_ntlm": true,
       "winrm_use_ssl": true,
-      "winrm_use_ntlm": true
+      "winrm_username": "vagrant"
     }
   ],
   "post-processors": [
@@ -115,30 +198,30 @@
     },
     [
       {
-        "type": "vsphere",
-        "host": "{{user `vmware_center_host`}}",
-        "vm_name": "{{user `vmware_center_vm_name`}}",
         "cluster": "{{user `vmware_center_cluster_name`}}",
         "datacenter": "{{user `vmware_center_datacenter`}}",
-        "esxi_host": "{{user `vmware_center_esxi_host`}}",
         "datastore": "{{user `vmware_center_datastore`}}",
         "disk_mode": "thin",
-        "keep_input_artifact": true,
-        "vm_network": "{{user `vmware_center_vm_network`}}",
-        "vm_folder": "{{user `vmware_center_vm_folder`}}",
-        "overwrite": true,
-        "insecure": true,
-        "username": "{{user `vmware_center_username`}}",
-        "password": "{{user `vmware_center_password`}}"
-      },
-      {
-        "type": "vsphere-template",
+        "esxi_host": "{{user `vmware_center_esxi_host`}}",
         "host": "{{user `vmware_center_host`}}",
         "insecure": true,
-        "username": "{{user `vmware_center_username`}}",
+        "keep_input_artifact": true,
+        "overwrite": true,
         "password": "{{user `vmware_center_password`}}",
+        "type": "vsphere",
+        "username": "{{user `vmware_center_username`}}",
+        "vm_folder": "{{user `vmware_center_vm_folder`}}",
+        "vm_name": "{{user `vmware_center_vm_name`}}",
+        "vm_network": "{{user `vmware_center_vm_network`}}"
+      },
+      {
         "datacenter": "{{user `vmware_center_datacenter`}}",
-        "folder": "/packer-templates/os/windows-2019"
+        "folder": "/packer-templates/os/windows-2019",
+        "host": "{{user `vmware_center_host`}}",
+        "insecure": true,
+        "password": "{{user `vmware_center_password`}}",
+        "type": "vsphere-template",
+        "username": "{{user `vmware_center_username`}}"
       }
     ]
   ],
@@ -151,9 +234,9 @@
       "type": "windows-shell"
     },
     {
+      "pause_before": "15s",
       "restart_timeout": "{{user `restart_timeout`}}",
-      "type": "windows-restart",
-      "pause_before": "15s"
+      "type": "windows-restart"
     },
     {
       "scripts": [
@@ -162,16 +245,16 @@
       "type": "windows-shell"
     },
     {
+      "pause_before": "5s",
       "restart_timeout": "{{user `restart_timeout`}}",
-      "type": "windows-restart",
-      "pause_before": "5s"
+      "type": "windows-restart"
     },
     {
+      "pause_before": "15s",
       "scripts": [
         "./scripts/enable-rdp.bat"
       ],
-      "type": "windows-shell",
-      "pause_before": "15s"
+      "type": "windows-shell"
     },
     {
       "scripts": [
@@ -194,47 +277,47 @@
       "type": "windows-shell"
     },
     {
-      "type": "powershell",
       "scripts": [
         "./scripts/enable-psremoting.ps1",
         "./scripts/compact.ps1"
-      ]
+      ],
+      "type": "powershell"
     }
   ],
+  "sensitive-variables": [
+    "vmware_center_password",
+    "vagrant_user_final_password"
+  ],
   "variables": {
-    "customise_for_buildmachine": "0",
     "autounattend": "./answer_files/server-2019/Autounattend.xml",
-    "autounattend_iso":"{{env `AUTOUNATTEND_ISO`}}",
-    "build_directory":"{{env `VAGRANT_OUTPUT`}}",
-    "output_directory":"{{env `VAGRANT_OUTPUT`}}/packer-output",
-    "main_os_disk_size": "80000",
-    "x_mirror_disk_size": "150000",
+    "autounattend_iso": "{{env `AUTOUNATTEND_ISO`}}",
+    "build_directory": "{{env `VAGRANT_OUTPUT`}}",
     "builds_disk_size": "300000",
-    "disk_type_id": "1",
     "cpus": "8",
-    "ram": "4096",
+    "customise_for_buildmachine": "0",
+    "disk_type_id": "1",
     "headless": "false",
     "iso_checksum": "549bca46c055157291be6c22a3aaaed8330e78ef4382c99ee82c896426a1cee1",
     "iso_checksum_type": "sha256",
     "iso_url": "https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso",
+    "main_os_disk_size": "80000",
     "manually_download_iso_from": "https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019",
+    "output_directory": "{{env `VAGRANT_OUTPUT`}}/packer-output",
+    "ram": "4096",
     "restart_timeout": "5m",
-    "winrm_timeout": "6h",
     "vagrant_user_final_password": "{{env `VAGRANT_USER_FINAL_PASSWORD`}}",
-    "vmware_center_host": "{{env `VMWARECENTER_HOST`}}",
-    "vmware_center_vm_name": "{{env `VMWARECENTER_VM_NAME`}}",
     "vmware_center_cluster_name": "{{env `VMWARECENTER_CLUSTER_NAME`}}",
     "vmware_center_datacenter": "{{env `VMWARECENTER_DATACENTER`}}",
-    "vmware_center_esxi_host": "{{env `VMWARECENTER_ESXI_HOST`}}",
     "vmware_center_datastore": "{{env `VMWARECENTER_DATASTORE`}}",
-    "vmware_center_vm_network": "{{env `VMWARECENTER_VM_NETWORK`}}",
-    "vmware_center_vm_folder": "{{env `VMWARECENTER_VM_FOLDER`}}",
+    "vmware_center_esxi_host": "{{env `VMWARECENTER_ESXI_HOST`}}",
+    "vmware_center_host": "{{env `VMWARECENTER_HOST`}}",
+    "vmware_center_password": "{{env `VMWARECENTER_PASSWORD`}}",
     "vmware_center_username": "{{env `VMWARECENTER_USERNAME`}}",
-    "vmware_center_password": "{{env `VMWARECENTER_PASSWORD`}}"
-  },
-  "sensitive-variables": [
-    "vmware_center_password",
-    "vagrant_user_final_password"
-  ]
+    "vmware_center_vm_folder": "{{env `VMWARECENTER_VM_FOLDER`}}",
+    "vmware_center_vm_name": "{{env `VMWARECENTER_VM_NAME`}}",
+    "vmware_center_vm_network": "{{env `VMWARECENTER_VM_NETWORK`}}",
+    "winrm_timeout": "6h",
+    "x_mirror_disk_size": "150000"
+  }
 }
 
