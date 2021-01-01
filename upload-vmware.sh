@@ -21,4 +21,17 @@ PROVIDER="vmware_desktop"
 BOX_VERSION="$(date +%Y%m%d).0"
 FILENAME=$BOX_NAME.$BOX_VERSION.$PROVIDER.box
 PATH_TO_FILE=$VAGRANT_OUTPUT/$FILENAME
-curl -H "X-JFrog-Art-Api:$ARTIFACTORY_API_KEY" -T $PATH_TO_FILE "https://artifactory.ccdc.cam.ac.uk/artifactory/ccdc-vagrant-repo/$FILENAME;box_name=$BOX_NAME;box_provider=$PROVIDER;box_version=$BOX_VERSION"
+echo "pushing box to artifactory"
+
+# Possible values are: INFO, ERROR, and DEBUG.
+export JFROG_CLI_LOG_LEVEL=DEBUG
+
+export JFROG_CLI_OFFER_CONFIG=false
+
+jfrog rt u \
+  --apikey "$ARTIFACTORY_API_KEY" \
+  --props "box_name=$BOX_NAME;box_provider=$PROVIDER;box_version=$BOX_VERSION" \
+  --retries 100 \
+  --url "https://artifactory.ccdc.cam.ac.uk/artifactory" \
+  $PATH_TO_FILE \
+  "ccdc-vagrant-repo/$FILENAME"
