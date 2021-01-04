@@ -189,7 +189,7 @@
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>C:\Windows\SysWOW64\cmd.exe /c powershell -Command "copy E:\fix-drive-letters.ps1 C:\Windows\Temp; & C:\Windows\Temp\fix-drive-letters.ps1"</CommandLine>
+                    <CommandLine>C:\Windows\SysWOW64\cmd.exe /c powershell -Command "copy E:\fix-drive-letters.ps1 C:\Windows\Temp; &#38; C:\Windows\Temp\fix-drive-letters.ps1"</CommandLine>
                     <Description>Move CDRoms higher and enable second and third disk</Description>
                     <Order>3</Order>
                     <RequiresUserInput>true</RequiresUserInput>
