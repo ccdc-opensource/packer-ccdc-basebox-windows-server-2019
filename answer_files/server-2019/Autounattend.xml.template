@@ -290,6 +290,11 @@
                     <Order>29</Order>
                     <Description>Cleanup</Description>
                 </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>cmd.exe /c powershell -Command "Get-NetConnectionProfile -NetworkCategory Public | Set-NetConnectionProfile -NetworkCategory Private"</CommandLine>
+                    <Order>30</Order>
+                    <Description>Make all connections private</Description>
+                </SynchronousCommand>
                 <!-- WITH WINDOWS UPDATES -->
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>cmd.exe /c g:\microsoft-updates.bat</CommandLine>
