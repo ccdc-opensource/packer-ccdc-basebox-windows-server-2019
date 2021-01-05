@@ -30,6 +30,13 @@
                 <LogonCount>1</LogonCount>
                 <Username>vagrant</Username>
             </AutoLogon>
+            <FirstLogonCommands>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>cmd.exe /c powershell -Command &quot;while (1) { $profiles = Get-NetConnectionProfile; if (($profiles | measure).count -gt 0 ) { break; } ; start-sleep -s 1; }; Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private ; start-sleep 5&quot;</CommandLine>
+                    <Order>1</Order>
+                    <Description>Make all connections private</Description>
+                </SynchronousCommand>
+            </FirstLogonCommands>
         </component>
     </settings>
     <settings pass="specialize">

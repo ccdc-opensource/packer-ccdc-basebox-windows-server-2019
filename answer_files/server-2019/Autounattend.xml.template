@@ -6,11 +6,11 @@
             <SetupUILanguage>
                 <UILanguage>en-US</UILanguage>
             </SetupUILanguage>
-            <InputLocale>en-UK</InputLocale>
-            <SystemLocale>en-UK</SystemLocale>
+            <InputLocale>en-GB</InputLocale>
+            <SystemLocale>en-GB</SystemLocale>
             <UILanguage>en-US</UILanguage>
             <UILanguageFallback>en-US</UILanguageFallback>
-            <UserLocale>en-UK</UserLocale>
+            <UserLocale>en-GB</UserLocale>
         </component>
         <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
             <DiskConfiguration>
@@ -189,7 +189,7 @@
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>C:\Windows\SysWOW64\cmd.exe /c powershell -Command "copy E:\fix-drive-letters.ps1 C:\Windows\Temp; & C:\Windows\Temp\fix-drive-letters.ps1"</CommandLine>
+                    <CommandLine>C:\Windows\SysWOW64\cmd.exe /c powershell -Command "copy E:\fix-drive-letters.ps1 C:\Windows\Temp; &#38; C:\Windows\Temp\fix-drive-letters.ps1"</CommandLine>
                     <Description>Move CDRoms higher and enable second and third disk</Description>
                     <Order>3</Order>
                     <RequiresUserInput>true</RequiresUserInput>
@@ -290,6 +290,11 @@
                     <Order>29</Order>
                     <Description>Cleanup</Description>
                 </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>cmd.exe /c powershell -Command "Get-NetConnectionProfile -NetworkCategory Public | Set-NetConnectionProfile -NetworkCategory Private"</CommandLine>
+                    <Order>30</Order>
+                    <Description>Make all connections private</Description>
+                </SynchronousCommand>
                 <!-- WITH WINDOWS UPDATES -->
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>cmd.exe /c g:\microsoft-updates.bat</CommandLine>
@@ -328,7 +333,7 @@
                 <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
                 <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
                 <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
-                <NetworkLocation>Home</NetworkLocation>
+                <NetworkLocation>Work</NetworkLocation>
                 <ProtectYourPC>1</ProtectYourPC>
             </OOBE>
             <UserAccounts>
