@@ -58,7 +58,7 @@
     },
     {
       "boot_command": [
-          "fs0:\\EFI\\BOOT\\BOOTX64.efi",
+          "fs1:\\EFI\\BOOT\\BOOTX64.efi",
           "<enter>",
           "<enter>",
           "<enter>",
@@ -66,7 +66,7 @@
           "<enter>",
           "<enter>"
       ],
-      "boot_wait": "30s",
+      "boot_wait": "15s",
       "communicator": "winrm",
       "cpus": "{{user `cpus`}}",
       "disk_size": "{{user `main_os_disk_size`}}",
@@ -162,7 +162,7 @@
           "--storagectl",
           "SATA Controller",
           "--port",
-          "4",
+          "20",
           "--type",
           "dvddrive",
           "--medium",
@@ -176,7 +176,7 @@
           "--storagectl",
           "SATA Controller",
           "--port",
-          "4",
+          "20",
           "--medium",
           "emptydrive"
         ]
