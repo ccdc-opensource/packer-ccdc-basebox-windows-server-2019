@@ -317,7 +317,7 @@
     "vmware_center_vm_name": "{{env `VMWARECENTER_VM_NAME`}}",
     "vmware_center_vm_network": "{{env `VMWARECENTER_VM_NETWORK`}}",
     "winrm_timeout": "6h",
-    "x_mirror_disk_size": "150000"
+    "x_mirror_disk_size": "200000"
   }
 }
 
