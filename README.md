@@ -74,6 +74,11 @@ Useful blog posts:
 
 Now you have a basic windows image, it's time to add software to it. So open the README.md file in the ansible-ccdc-windows-cpp-builder directory!
 
+## The VMWare tools version is old and gets updated when I use the output of this build. How do I update it?
+
+The vmware tools are downloaded by the scripts/vm-guest-tools-cleanup.bat script during base box provisioning. To get a newer version,
+you need to find the most recent version [of vmware desktop products](https://softwareupdate.vmware.com/cds/vmw-desktop/ws/) and update the URL in the bat script.
+
 ## Troubleshooting
 
 If virtualbox is complaining that a disk already exists, run the virtualbox management application and remove the two disks (x_mirror.vmdk and builds.vmdk)
