@@ -55,12 +55,12 @@ goto :done
 :parallels
 if exist "C:\Users\vagrant\prl-tools-win.iso" (
     echo "Extracting Parallels Tools..."
-	move /Y C:\Users\vagrant\prl-tools-win.iso C:\Windows\Temp
-	cmd /C "C:\Program Files\7-Zip\7z.exe" x C:\Windows\Temp\prl-tools-win.iso -oC:\Windows\Temp\parallels
+    move /Y C:\Users\vagrant\prl-tools-win.iso C:\Windows\Temp
+    cmd /C "C:\Program Files\7-Zip\7z.exe" x C:\Windows\Temp\prl-tools-win.iso -oC:\Windows\Temp\parallels
     echo "Installing Parallels Tools..."
-	cmd /C C:\Windows\Temp\parallels\PTAgent.exe /install_silent
+    cmd /C C:\Windows\Temp\parallels\PTAgent.exe /install_silent
     echo "Removing Parallels Tools downloads..."
-	rd /S /Q "C:\Windows\Temp\parallels"
+    rd /S /Q "C:\Windows\Temp\parallels"
 )
 goto :done
 
