@@ -29,8 +29,8 @@ export JFROG_CLI_LOG_LEVEL=DEBUG
 export JFROG_CLI_OFFER_CONFIG=false
 
 jfrog rt u \
-  --apikey "$ARTIFACTORY_API_KEY" \
-  --props "box_name=$BOX_NAME;box_provider=$PROVIDER;box_version=$BOX_VERSION" \
+  --password "$ARTIFACTORY_API_KEY" \
+  --target-props "box_name=$BOX_NAME;box_provider=$PROVIDER;box_version=$BOX_VERSION" \
   --retries 100 \
   --url "https://artifactory.ccdc.cam.ac.uk/artifactory" \
   $PATH_TO_FILE \

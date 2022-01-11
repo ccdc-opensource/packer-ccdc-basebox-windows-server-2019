@@ -25,6 +25,7 @@
       "iso_url": "{{user `iso_url`}}",
       "memory": "{{user `ram`}}",
       "network_adapter_type": "VMXNET3",
+      "network": "nat",
       "output_directory": "{{user `output_directory`}}",
       "shutdown_command": "G:/sysprep.bat",
       "type": "vmware-iso",
