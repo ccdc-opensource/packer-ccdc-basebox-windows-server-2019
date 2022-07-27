@@ -1,0 +1,10 @@
+---
+- hosts: all
+  gather_facts: yes
+  roles:
+  - role: ccdc.vagrant-base-box
+  - role: ccdc.install-vm-tools
+  - role: ccdc.debloat-windows
+    vars:
+      disable_telemetry_dnsblock: false
+  - role: ccdc.compact-vm-image

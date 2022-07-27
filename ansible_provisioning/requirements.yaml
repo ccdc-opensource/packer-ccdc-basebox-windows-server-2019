@@ -1,0 +1,13 @@
+---
+- src: git@github.com:florianpiesche/ansible-role-debloat-windows
+  scm: git
+  name: ccdc.debloat-windows
+- src: git@github.com:florianpiesche/ansible-role-vagrant-base-box
+  scm: git
+  name: ccdc.vagrant-base-box
+- src: git@github.com:florianpiesche/ansible-role-install-vm-tools
+  scm: git
+  name: ccdc.install-vm-tools
+- src: git@github.com:florianpiesche/ansible-role-compact-vm-image
+  scm: git
+  name: ccdc.compact-vm-image

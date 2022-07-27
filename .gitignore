@@ -1,11 +1,7 @@
 /packer_cache
-/output-vmware-iso
-/output-virtualbox-iso
 /output
 *.vmdk
 *.vdi
 *.box
 vsphere-environment-do-not-add
-unattend-floppy-scripts/unattend.xml
-answer_files/server-2019/Autounattend.xml
-.DS_Store
+ansible_provisioning/roles/*
