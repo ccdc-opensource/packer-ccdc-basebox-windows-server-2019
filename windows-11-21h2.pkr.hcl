@@ -177,7 +177,7 @@ build {
     playbook_file = "./ansible_provisioning/playbook.yaml"
     galaxy_file = "./ansible_provisioning/requirements.yaml"
     roles_path = "./ansible_provisioning/roles"
-    // galaxy_force_install = true
+    galaxy_force_install = true
     user            = "vagrant"
     use_proxy       = false
     extra_arguments = [
