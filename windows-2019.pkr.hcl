@@ -69,7 +69,6 @@ source "virtualbox-iso" "windows-2019" {
   hard_drive_discard        = false
   iso_interface             = "sata"
   nic_type                  = "82540EM"
-  shutdown_command          = false
   usb                       = true
   vboxmanage = [
     ["storagectl", "{{ .Name }}", "--name", "IDE Controller", "--remove"],
@@ -81,11 +80,12 @@ source "virtualbox-iso" "windows-2019" {
   iso_url          = var.iso_url
   iso_checksum     = var.iso_checksum
   disk_size        = var.system_disk_size
-  disk_additional_size = [ "${var.x_mirror_disk_size}", "${var.builds_disk_size}" ]
+  disk_additional_size = [ var.x_mirror_disk_size, var.builds_disk_size ]
   headless         = false
   cd_files         = ["answer_files/windows-2019/autounattend.xml"]
   boot_wait        = "2s"
   boot_command     = ["<enter>"]
+  shutdown_command = "shutdown /s /t 0 /f /d p:4:1 /c \"Packer Shutdown\""
   output_directory = "${ var.output_directory }/${ var.vagrant_box }"
   communicator     = "winrm"
   winrm_username   = "vagrant"
@@ -120,6 +120,7 @@ source "vmware-iso" "windows-2019" {
                       "vmware_drivers/$WinpeDriver$"]
   boot_wait        = "2s"
   boot_command     = ["<enter>"]
+  shutdown_command = "shutdown /s /t 0 /f /d p:4:1 /c \"Packer Shutdown\""
   output_directory = "${ var.output_directory }/${ var.vagrant_box }"
   communicator     = "winrm"
   winrm_username   = "vagrant"
@@ -144,11 +145,12 @@ source "hyperv-iso" "windows-2019" {
   iso_url          = var.iso_url
   iso_checksum     = var.iso_checksum
   disk_size        = var.system_disk_size
-  disk_additional_size = [ "${var.x_mirror_disk_size}", "${var.builds_disk_size}" ]
+  disk_additional_size = [ var.x_mirror_disk_size, var.builds_disk_size ]
   headless         = false
   cd_files         = ["answer_files/windows-2019/autounattend.xml"]
   boot_wait        = "2s"
   boot_command     = ["<enter>"]
+  shutdown_command = "shutdown /s /t 0 /f /d p:4:1 /c \"Packer Shutdown\""
   output_directory = "${ var.output_directory }/${ var.vagrant_box }"
   communicator     = "winrm"
   winrm_username   = "vagrant"

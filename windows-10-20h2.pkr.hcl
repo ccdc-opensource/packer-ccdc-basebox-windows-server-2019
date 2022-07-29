@@ -57,46 +57,37 @@ variable "artifactory_api_key" {
 }
 
 source "virtualbox-iso" "windows-10-20h2" {
+  firmware                  = "efi"
+  gfx_accelerate_3d         = true
+  gfx_controller            = "vboxsvga"
+  gfx_vram_size             = 128
   guest_additions_interface = "sata"
-  guest_additions_mode      = "attach"
+  guest_additions_mode      = "disable"
   guest_os_type             = "Windows10_64"
   hard_drive_interface      = "sata"
+  hard_drive_nonrotational  = false
+  hard_drive_discard        = false
   iso_interface             = "sata"
+  nic_type                  = "82540EM"
+  shutdown_command          = false
+  usb                       = true
   vboxmanage = [
     ["storagectl", "{{ .Name }}", "--name", "IDE Controller", "--remove"],
-    ["modifyvm", "{{ .Name }}", "--firmware", "efi"],
-    ["modifyvm", "{{ .Name }}", "--vrde", "off"],
-    ["modifyvm", "{{ .Name }}", "--graphicscontroller", "vboxsvga"],
-    ["modifyvm", "{{ .Name }}", "--vram", "128"],
-    ["modifyvm", "{{ .Name }}", "--accelerate3d", "on"],
-    ["modifyvm", "{{ .Name }}", "--usb", "on"],
-    ["modifyvm", "{{ .Name }}", "--mouse", "usbtablet"],
-    ["modifyvm", "{{ .Name }}", "--audio", "none"],
-    ["modifyvm", "{{ .Name }}", "--nictype1", "82540EM"],
-    ["modifyvm", "{{ .Name }}", "--natpf1", "guestwinrm,tcp,127.0.0.1,5985,,5985"],
-    ["createmedium", "disk", "--filename", "${var.output_directory}/-{{ .Name }}/x_mirror-{{ timestamp }}.vdi",
-    "--size", "${var.x_mirror_disk_size}"],
-    ["createmedium", "disk", "--filename", "${var.output_directory}-{{ .Name }}/builds-{{ timestamp }}.vdi",
-    "--size", "${var.builds_disk_size}"],
-    ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2",
-    "--type", "hdd", "--mtype", "writethrough",
-    "--medium", "${var.output_directory}-{{ .Name }}/x_mirror-{{ timestamp }}.vdi"],
-    ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3",
-      "--type", "hdd", "--mtype", "writethrough",
-      "--medium", "${var.output_directory}-{{ .Name }}/builds-{{ timestamp }}.vdi"
-    ],
   ]
+
   // Settings shared between all builders
   cpus             = 2
   memory           = 4096
   iso_url          = var.iso_url
   iso_checksum     = var.iso_checksum
   disk_size        = var.system_disk_size
+  disk_additional_size = [ var.x_mirror_disk_size, var.builds_disk_size ]
   headless         = false
   cd_files         = ["answer_files/windows-10-20h2/autounattend.xml"]
   boot_wait        = "2s"
   boot_command     = ["<enter>"]
   shutdown_command = "shutdown /s /t 0 /f /d p:4:1 /c \"Packer Shutdown\""
+  output_directory = "${ var.output_directory }/${ var.vagrant_box }"
   communicator     = "winrm"
   winrm_username   = "vagrant"
   winrm_password   = "vagrant"
@@ -107,21 +98,19 @@ source "virtualbox-iso" "windows-10-20h2" {
 }
 
 source "vmware-iso" "windows-10-20h2" {
-  disk_additional_size = [
-    "${var.x_mirror_disk_size}",
-    "${var.builds_disk_size}"
-  ]
   // Settings shared between all builders
   cpus             = 2
   memory           = 4096
   iso_url          = var.iso_url
   iso_checksum     = var.iso_checksum
   disk_size        = var.system_disk_size
+  disk_additional_size = [ var.x_mirror_disk_size, var.builds_disk_size ]
   headless         = false
   cd_files         = ["answer_files/windows-10-20h2/autounattend.xml"]
   boot_wait        = "2s"
   boot_command     = ["<enter>"]
   shutdown_command = "shutdown /s /t 0 /f /d p:4:1 /c \"Packer Shutdown\""
+  output_directory = "${ var.output_directory }/${ var.vagrant_box }"
   communicator     = "winrm"
   winrm_username   = "vagrant"
   winrm_password   = "vagrant"
@@ -144,11 +133,13 @@ source "hyperv-iso" "windows-10-20h2" {
   iso_url          = var.iso_url
   iso_checksum     = var.iso_checksum
   disk_size        = var.system_disk_size
+  disk_additional_size = [ var.x_mirror_disk_size, var.builds_disk_size ]
   headless         = false
   cd_files         = ["answer_files/windows-10-20h2/autounattend.xml"]
   boot_wait        = "2s"
   boot_command     = ["<enter>"]
   shutdown_command = "shutdown /s /t 0 /f /d p:4:1 /c \"Packer Shutdown\""
+  output_directory = "${ var.output_directory }/${ var.vagrant_box }"
   communicator     = "winrm"
   winrm_username   = "vagrant"
   winrm_password   = "vagrant"
