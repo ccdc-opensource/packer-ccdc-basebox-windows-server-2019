@@ -87,7 +87,7 @@ source "virtualbox-iso" "windows-2022" {
   boot_wait        = "2s"
   boot_command     = ["<enter>"]
   shutdown_command = "shutdown /s /t 0 /f /d p:4:1 /c \"Packer Shutdown\""
-  output_directory = "${ var.output_directory }/${ var.vagrant_box }"
+  output_directory = "${ var.output_directory }/${ var.vagrant_box }.${ source.type }"
   communicator     = "winrm"
   winrm_username   = "vagrant"
   winrm_password   = "vagrant"
@@ -122,7 +122,7 @@ source "vmware-iso" "windows-2022" {
   boot_wait        = "2s"
   boot_command     = ["<enter>"]
   shutdown_command = "shutdown /s /t 0 /f /d p:4:1 /c \"Packer Shutdown\""
-  output_directory = "${ var.output_directory }/${ var.vagrant_box }"
+  output_directory = "${ var.output_directory }/${ var.vagrant_box }.${ source.type }"
   communicator     = "winrm"
   winrm_username   = "vagrant"
   winrm_password   = "vagrant"
@@ -152,7 +152,7 @@ source "hyperv-iso" "windows-2022" {
   boot_wait        = "2s"
   boot_command     = ["<enter>"]
   shutdown_command = "shutdown /s /t 0 /f /d p:4:1 /c \"Packer Shutdown\""
-  output_directory = "${ var.output_directory }/${ var.vagrant_box }"
+  output_directory = "${ var.output_directory }/${ var.vagrant_box }.${ source.type }"
   communicator     = "winrm"
   winrm_username   = "vagrant"
   winrm_password   = "vagrant"
