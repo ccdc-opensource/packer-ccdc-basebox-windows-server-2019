@@ -5,3 +5,4 @@
 *.box
 vsphere-environment-do-not-add
 ansible_provisioning/roles/*
+.DS_Store
