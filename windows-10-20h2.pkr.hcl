@@ -1,8 +1,3 @@
-packer {
-  required_plugins {
-  }
-}
-
 variable "iso_url" {
   type    = string
   default = "https://software-download.microsoft.com/download/pr/19042.508.200927-1902.20h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-gb.iso"
@@ -54,6 +49,11 @@ variable "output_directory" {
 variable "artifactory_api_key" {
   type    = string
   default = env("ARTIFACTORY_API_KEY")
+}
+
+variable "artifactory_username" {
+  type    = string
+  default = env("USER")
 }
 
 source "virtualbox-iso" "windows-10-20h2" {
@@ -153,8 +153,8 @@ build {
 
   sources = [
     "source.vmware-iso.windows-10-20h2",
-    "source.virtualbox-iso.windows-10-20h2",
     "source.hyperv-iso.windows-10-20h2",
+    "source.virtualbox-iso.windows-10-20h2",
   ]
 
   provisioner "ansible" {
@@ -165,19 +165,24 @@ build {
     user            = "vagrant"
     use_proxy       = false
     extra_arguments = [
+      // "-vvv",
       "-e",
       "ansible_winrm_server_cert_validation=ignore",
       "-e",
       "ansible_winrm_scheme=http",
       "-e",
-      "ansible_become_method=runas"
+      "ansible_become_method=runas",
+      "-e",
+      "ansible_become_user=System",
+      "-e",
+      "ansible_winrm_read_timeout_sec=600"
     ]
   }
 
   post-processors {
 
     post-processor "vagrant" {
-      output               = var.vagrant_box
+      output               = "${ var.output_directory }/${ var.vagrant_box }.${ source.type }.box"
       vagrantfile_template = "Vagrantfile-uefi.template"
     }
 
@@ -185,16 +190,19 @@ build {
     post-processor "shell-local" {
       environment_vars = [
         "ARTIFACTORY_API_KEY=${ var.artifactory_api_key }",
+        "ARTIFACTORY_USERNAME=${ var.artifactory_username }",
         "BOX_NAME=${ var.vagrant_box }",
         "PROVIDER=${ replace(source.type, "-iso", "") }",
-        "BOX_VERSION=\"${ formatdate("YYYYMMDD", timestamp()) }.0\""
+        "BOX_VERSION=${ formatdate("YYYYMMDD", timestamp()) }.0"
       ]
       command = join(" ", [
         "jf rt upload",
         "--target-props \"box_name=$BOX_NAME;box_provider=$PROVIDER;box_version=$BOX_VERSION\"",
         "--retries 10",
+        "--access-token $ARTIFACTORY_API_KEY",
+        "--user $ARTIFACTORY_USERNAME",
         "--url \"https://artifactory.ccdc.cam.ac.uk/artifactory\"",
-        "${ var.output_directory }/${ var.vagrant_box }/${ var.vagrant_box }.box",
+        "${ var.output_directory }/${ var.vagrant_box }.${ source.type }.box",
         "ccdc-vagrant-repo/$BOX_NAME.$BOX_VERSION.$PROVIDER.box"
       ])
     }

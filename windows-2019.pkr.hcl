@@ -1,8 +1,3 @@
-packer {
-  required_plugins {
-  }
-}
-
 variable "iso_url" {
   type    = string
   default = "https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso"
@@ -54,6 +49,11 @@ variable "output_directory" {
 variable "artifactory_api_key" {
   type    = string
   default = env("ARTIFACTORY_API_KEY")
+}
+
+variable "artifactory_username" {
+  type    = string
+  default = env("USER")
 }
 
 source "virtualbox-iso" "windows-2019" {
@@ -164,7 +164,6 @@ source "hyperv-iso" "windows-2019" {
 // source "vsphere-iso" "windows-2019" {
 // https://www.packer.io/plugins/builders/vsphere/vsphere-iso
 // }
-
 build {
 
   sources = [
@@ -206,14 +205,17 @@ build {
     post-processor "shell-local" {
       environment_vars = [
         "ARTIFACTORY_API_KEY=${ var.artifactory_api_key }",
+        "ARTIFACTORY_USERNAME=${ var.artifactory_username }",
         "BOX_NAME=${ var.vagrant_box }",
         "PROVIDER=${ replace(source.type, "-iso", "") }",
-        "BOX_VERSION=\"${ formatdate("YYYYMMDD", timestamp()) }.0\""
+        "BOX_VERSION=${ formatdate("YYYYMMDD", timestamp()) }.0"
       ]
       command = join(" ", [
         "jf rt upload",
         "--target-props \"box_name=$BOX_NAME;box_provider=$PROVIDER;box_version=$BOX_VERSION\"",
         "--retries 10",
+        "--access-token $ARTIFACTORY_API_KEY",
+        "--user $ARTIFACTORY_USERNAME",
         "--url \"https://artifactory.ccdc.cam.ac.uk/artifactory\"",
         "${ var.output_directory }/${ var.vagrant_box }.${ source.type }.box",
         "ccdc-vagrant-repo/$BOX_NAME.$BOX_VERSION.$PROVIDER.box"
