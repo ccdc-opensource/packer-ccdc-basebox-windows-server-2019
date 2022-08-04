@@ -99,7 +99,7 @@ source "virtualbox-iso" "windows-2019" {
 source "vmware-iso" "windows-2019" {
   disk_type_id                    = 0
   disk_adapter_type               = "pvscsi"
-  guest_os_type                   = "windows9svr-64"
+  guest_os_type                   = "windows2019srv-64"
   network_adapter_type            = "VMXNET3"
   network                         = "nat"
   version                         = 14
