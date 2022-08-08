@@ -50,7 +50,7 @@
                     <DiskID>0</DiskID>
                     <WillWipeDisk>true</WillWipeDisk>
                 </Disk>
-                <Disk wcm:action="add">
+                <!-- <Disk wcm:action="add">
                     <CreatePartitions>
                         <CreatePartition wcm:action="add">
                             <Type>Primary</Type>
@@ -91,7 +91,7 @@
                     </ModifyPartitions>
                     <DiskID>2</DiskID>
                     <WillWipeDisk>true</WillWipeDisk>
-                </Disk>
+                </Disk> -->
             </DiskConfiguration>
             <ImageInstall>
                 <OSImage>
