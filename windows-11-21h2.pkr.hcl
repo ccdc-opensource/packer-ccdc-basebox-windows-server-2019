@@ -79,8 +79,12 @@ source "virtualbox-iso" "windows-11-21h2" {
   memory           = 4096
   iso_url          = var.iso_url
   iso_checksum     = var.iso_checksum
-  disk_size        = var.system_disk_size
-  disk_additional_size = [ var.x_mirror_disk_size, var.builds_disk_size ]
+  // https://github.com/hashicorp/vagrant/issues/10831 means Vagrant can't use multiple
+  // disks with its Hyper-V provider.
+  // As Win10 and 11 will only be used for testing, just provision one very large disk
+  // instead of our standard three-disk build machine setup.
+  disk_size        = 400000
+  // disk_additional_size = [ var.x_mirror_disk_size, var.builds_disk_size ]
   headless         = false
   cd_files         = ["answer_files/windows-11-21h2/autounattend.xml"]
   boot_wait        = "2s"
@@ -113,8 +117,12 @@ source "vmware-iso" "windows-11-21h2" {
   memory           = 4096
   iso_url          = var.iso_url
   iso_checksum     = var.iso_checksum
-  disk_size        = var.system_disk_size
-  disk_additional_size = [ var.x_mirror_disk_size, var.builds_disk_size ]
+  // https://github.com/hashicorp/vagrant/issues/10831 means Vagrant can't use multiple
+  // disks with its Hyper-V provider.
+  // As Win10 and 11 will only be used for testing, just provision one very large disk
+  // instead of our standard three-disk build machine setup.
+  disk_size        = 400000
+  // disk_additional_size = [ var.x_mirror_disk_size, var.builds_disk_size ]
   headless         = false
   cd_files         = ["answer_files/windows-11-21h2/autounattend.xml",
                       "vmware_drivers/$WinpeDriver$"]
