@@ -3,6 +3,18 @@
   gather_facts: yes
   roles:
   - role: ccdc.vagrant-base-box
+    vars:
+      drive_configuration:
+        - letter: d
+          label: x_mirror
+          number: 1
+          online: true
+          readonly: false
+        - letter: e
+          label: builds
+          number: 2
+          online: true
+          readonly: false
   - role: ccdc.install-vm-tools
   - role: ccdc.debloat-windows
     vars:
