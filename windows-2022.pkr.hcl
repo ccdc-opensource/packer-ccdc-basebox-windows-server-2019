@@ -205,23 +205,17 @@ build {
 
     // Once box has been created, upload it to Artifactory
     post-processor "shell-local" {
-      environment_vars = [
-        "ARTIFACTORY_API_KEY=${ var.artifactory_api_key }",
-        "ARTIFACTORY_USERNAME=${ var.artifactory_username }",
-        "BOX_NAME=${ var.vagrant_box }",
-        "PROVIDER=${ replace(source.type, "-iso", "") }",
-        "BOX_VERSION=${ formatdate("YYYYMMDD", timestamp()) }.0"
-      ]
       command = join(" ", [
         "jf rt upload",
-        "--target-props \"box_name=$BOX_NAME;box_provider=$PROVIDER;box_version=$BOX_VERSION\"",
+        "--target-props \"box_name=${ var.vagrant_box };box_provider=${ replace(replace(source.type, "-iso", ""), "vmware", "vmware-desktop") };box_version=${ formatdate("YYYYMMDD", timestamp()) }.0\"",
         "--retries 10",
-        "--access-token $ARTIFACTORY_API_KEY",
-        "--user $ARTIFACTORY_USERNAME",
+        "--access-token ${ var.artifactory_api_key }",
+        "--user ${ var.artifactory_username }",
         "--url \"https://artifactory.ccdc.cam.ac.uk/artifactory\"",
         "${ var.output_directory }/${ var.vagrant_box }.${ source.type }.box",
-        "ccdc-vagrant-repo/$BOX_NAME.$BOX_VERSION.$PROVIDER.box"
+        "ccdc-vagrant-repo/${ var.vagrant_box }.${ formatdate("YYYYMMDD", timestamp()) }.0.${ replace(source.type, "-iso", "") }.box"
       ])
     }
+
   }
 }
