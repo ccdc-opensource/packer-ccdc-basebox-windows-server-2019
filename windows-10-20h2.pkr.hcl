@@ -185,7 +185,7 @@ build {
   post-processors {
 
     post-processor "vagrant" {
-      output               = "${ var.output_directory }/${ var.vagrant_box }.${ source.type }.box"
+      output               = "${var.output_directory}/${ var.vagrant_box }.${ replace(replace(replace(source.type, "-iso", ""), "hyper-v", "hyperv"), "vmware", "vmware_desktop") }.box"
       vagrantfile_template = "Vagrantfile-uefi.template"
     }
 
@@ -193,15 +193,14 @@ build {
     post-processor "shell-local" {
       command = join(" ", [
         "jf rt upload",
-        "--target-props \"box_name=${ var.vagrant_box };box_provider=${ replace(replace(source.type, "-iso", ""), "vmware", "vmware-desktop") };box_version=${ formatdate("YYYYMMDD", timestamp()) }.0\"",
+        "--target-props \"box_name=${ var.vagrant_box };box_provider=${replace(replace(replace(source.type, "-iso", ""), "hyper-v", "hyperv"), "vmware", "vmware_desktop")};box_version=${ formatdate("YYYYMMDD", timestamp()) }.0\"",
         "--retries 10",
         "--access-token ${ var.artifactory_api_key }",
         "--user ${ var.artifactory_username }",
         "--url \"https://artifactory.ccdc.cam.ac.uk/artifactory\"",
-        "${ var.output_directory }/${ var.vagrant_box }.${ source.type }.box",
-        "ccdc-vagrant-repo/${ var.vagrant_box }.${ formatdate("YYYYMMDD", timestamp()) }.0.${ replace(source.type, "-iso", "") }.box"
+        "${var.output_directory}/${var.vagrant_box}.${replace(replace(replace(source.type, "-iso", ""), "hyper-v", "hyperv"), "vmware", "vmware_desktop")}.box",
+        "ccdc-vagrant-repo/${var.vagrant_box}.${formatdate("YYYYMMDD", timestamp())}.0.${replace(replace(replace(source.type, "-iso", ""), "hyper-v", "hyperv"), "vmware", "vmware_desktop")}.box"
       ])
     }
-
   }
 }
