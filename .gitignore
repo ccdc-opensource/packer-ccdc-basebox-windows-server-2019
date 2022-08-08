@@ -1,5 +1,6 @@
-/packer_cache
-/output
+packer_cache/*
+output/*
+tmp/*
 *.vmdk
 *.vdi
 *.box
