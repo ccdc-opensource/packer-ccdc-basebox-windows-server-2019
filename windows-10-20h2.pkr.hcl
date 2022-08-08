@@ -132,8 +132,11 @@ source "hyperv-iso" "windows-10-20h2" {
   memory           = 4096
   iso_url          = var.iso_url
   iso_checksum     = var.iso_checksum
-  disk_size        = var.system_disk_size
-  disk_additional_size = [ var.x_mirror_disk_size, var.builds_disk_size ]
+  // Vagrant's Hyper-V provider fails to import boxes with multiple disks properly
+  // https://github.com/hashicorp/vagrant/pull/12283 will fix this.
+  // In the meantime, just provision one very large disk for the VM.
+  disk_size        = 400000
+  // disk_additional_size = [ var.x_mirror_disk_size, var.builds_disk_size ]
   headless         = false
   cd_files         = ["answer_files/windows-10-20h2/autounattend.xml"]
   boot_wait        = "2s"
