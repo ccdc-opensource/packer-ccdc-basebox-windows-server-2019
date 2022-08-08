@@ -14,6 +14,18 @@ the answer files do is set up WinRM so that Ansible can connect.
 packer build -on-error=abort windows-10-21h2.pkr.hcl
 ```
 
+## How to build Hyper-V images
+
+Building Hyper-V images is somewhat more complex because it only works on Windows; however Ansible
+(which is used to provision the base system) does not work natively on Windows. There are a few
+prerequisites for building Hyper-V images:
+
+* Hyper-V enabled (`Enable-WindowsOptionalFeature Microsoft.Hyper-V`)
+* WSL installed with an Ubuntu distribution set up
+* Your user SSH keys set up in Ubuntu WSL (in order to get the provisioning Ansible roles)
+* Ansible installed to Ubuntu system Python (`sudo apt update; sudo apt install python3-pip; sudo pip3 install ansible`)
+* mkisofs installed to WSL Ubuntu (`sudo apt update; sudo apt install genisoimage`)
+
 ## Detailed build information
 
 The full process, end-to-end, will perform the following steps:
