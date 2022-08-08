@@ -33,7 +33,7 @@ variable "builds_disk_size" {
 
 variable "hyperv_switch_name" {
   type    = string
-  default = ${ env("HYPERV_SWITCH_NAME") | default("Default Switch") }
+  default = "Default Switch"
 }
 
 variable "hyperv_vlan_id" {
