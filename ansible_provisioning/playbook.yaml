@@ -3,6 +3,13 @@
   gather_facts: yes
   roles:
   - role: ccdc.vagrant-base-box
+    # For the Windows 10 and 11 images this needs to be
+    # commented out. Vagrant cannot import Hyper-V base boxes
+    # with more than one drive connected, so for the test
+    # boxes *only* we're provisioning a single large drive
+    # instead of three smaller ones.
+    # This is a known issue logged with Hashicorp at
+    # https://github.com/hashicorp/vagrant/issues/10831.
     vars:
       drive_configuration:
         - letter: d
