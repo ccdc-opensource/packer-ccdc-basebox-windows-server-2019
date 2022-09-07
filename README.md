@@ -1,97 +1,45 @@
-# Packer template for creating a windows server 2019 image for running builds
+# Packer configuration for Windows base boxes
 
-This packer template creates a basic windows 2019 server box with a predefined administrator user called vagrant, removes unnecessary packages from windows and packages up the result as a VMWare or Virtualbox image.
+This repository contains a number of HashiCorp Configuration Language files specifying builds
+for Vagrant boxes based on different versions of Windows, to be used as base boxes for e.g.
+build machines or other infrastructure VMs.
 
-## What happens here specifically?
+There is also a Windows unattended installation Answer File for each of these versions with a
+minimal setup - most of the provisioning is done via Ansible roles. Generally the only thing
+the answer files do is set up WinRM so that Ansible can connect.
 
-The following list is just a reference that may become out of date if people update the scripts and not the list. It's here to give a high level overview of what is going on and is not a substitute for reading the scripts, starting with the ccdc-windows-cpp-builder.json file!
+## How to build
 
-- It downloads an ISO file from Microsoft's servers.
-- It starts up VMWare and/or Virtualbox based on the parameters passed to the packer command and on each of those does the following steps:
-- It creates a Virtual Machine with three virtual disks (one for the system, one for the x_mirror contents and one for the builds)
-- It runs the windows server installation based on the autounattend.xml file in answer_files\2019_core
-- This installs a windows server operating system based on the downloaded ISO.
-- It adds a build user that logs in automatically on machine startup
-- It reboots the machine and on the first start up runs a series of commands that can be edited by changing the FirstLogonCommands section in Autounattend.xml:
-  - Sets the execution policy to RemoteSigned for both 32 and 64 bit windows commands (See https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy?view=powershell-6)
-  - Disables winrm for a moment
-  - Shows file extensions in explorer
-  - Enables QuickEdit mode in CMD
-  - enables the Run command in the start menu
-  - enables the Administrative Tools in the start menu
-  - disables hibernation
-  - disables password expiration for the build user
-  - installs the ssh server and enables it on startup
-  - Uninstalls XPS-Viewer, Internet Explorer, and Windows Media Player (no browser is available)
-  - Uninstalls windows defender (no antivirus required if you can't download anything)
-  - Uninstalls Handwriting, OCR, Speech, Math recognition
-  - enables wirm so that the machine can be configured by ansible
-- After that, the scripts under the provisioners section in the json file are run doing the following:
-  - VMWare or virtualbox guest tools are installed
-  - RDP login is enabled
-  - Windows update is reset
-  - UAC is explicitly enabled (https://docs.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/microsoft-windows-lua-settings-enablelua)
-  - dotnet assemblies are precompiled
-  - the D drive containing the virtual DVD is moved to an upper drive letter to make space for D:\x_mirror
-  - defragmentation and compaction of free disk space is performed
+```
+packer build -on-error=abort windows-10-21h2.pkr.hcl
+```
 
+## How to build Hyper-V images
 
-## How do I use this?
+Building Hyper-V images is somewhat more complex because it only works on Windows; however Ansible
+(which is used to provision the base system) does not work natively on Windows. There are a few
+prerequisites for building Hyper-V images:
 
-You need the following prerequisites:
+* Hyper-V enabled (`Enable-WindowsOptionalFeature Microsoft.Hyper-V`)
+* WSL installed with an Ubuntu distribution set up
+* Your user SSH keys set up in Ubuntu WSL (in order to get the provisioning Ansible roles)
+* Ansible installed to Ubuntu system Python (`sudo apt update; sudo apt install python3-pip; sudo pip3 install ansible`)
+* mkisofs installed to WSL Ubuntu (`sudo apt update; sudo apt install genisoimage`)
 
-- Packer: install it via choco install packer on windows or via brew on MacOS
-- Virtualbox: required for creating an image that runs on virtualbox
-- VMWare Workstation: required for running an image that runs on VMWare
+## Detailed build information
 
-Once these are installed, open a command line window, cd in this directory and run 
+The full process, end-to-end, will perform the following steps:
 
-packer build ccdc-windows-cpp-builder.json
-
-This will create 
-To create the base box, you need a host capable of running ansible, so either a MacOS or Ubuntu machine, or by using ansible inside Linux Subsystem for Linux:
-- install ansible (on windows do that under the WSL Ubuntu distribution)
-- run the ansible-ccdc-windows-cpp-builder/playbook.yml playbook. on the target machine to install required packages and data
-- run the ansible-ccdc-windows-cpp-builder/enslave_to_teamcity.yml playbook. on the target machine to install a teamcity agent on it
-
-## Where do I begin stydying this?
-
-This stuff was shamelessly pilfered from https://github.com/StefanScherer/packer-windows in late January 2020 and extended for the purpose of building an "almost headless" build machine. That repository contains files for most windows versions and the community might be able to help with questions.
-
-The microsoft docs for unattended desktop installation and customisation are the reference for the autounattend.xml file
-
-https://docs.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/
-
-Why Packer? https://www.packer.io/intro/why.html
-
-Packer documentation: https://www.packer.io/docs/index.html
-
-Useful blog posts:
-- Best practices: https://hodgkins.io/best-practices-with-packer-and-windows
-- WinRM troubleshooting: http://www.hurryupandwait.io/blog/understanding-and-troubleshooting-winrm-connection-and-authentication-a-thrill-seekers-guide-to-adventure
-
-## Now what?
-
-Now you have a basic windows image, it's time to add software to it. So open the README.md file in the ansible-ccdc-windows-cpp-builder directory!
-
-## The VMWare tools version is old and gets updated when I use the output of this build. How do I update it?
-
-The vmware tools are downloaded by the scripts/vm-guest-tools-cleanup.bat script during base box provisioning. To get a newer version,
-you need to find the most recent version [of vmware desktop products](https://softwareupdate.vmware.com/cds/vmw-desktop/ws/) and update the URL in the bat script.
-
-## Troubleshooting
-
-If virtualbox is complaining that a disk already exists, run the virtualbox management application and remove the two disks (x_mirror.vmdk and builds.vmdk)
-
-## Wishes
-
-I wish it were possible to just add this command to the json. Then we would have a one click VM generation process. Unfortunately this can't work on the remaining 260Gb on my laptop...
-
-{
-    "type": "ansible",
-    "playbook_file": "../ansible-ccdc-windows-cpp-builder/playbook.yml",
-    "extra_arguments": [
-    "--connection", "packer",
-    "--extra-vars", "ansible_shell_type=powershell ansible_shell_executable=None"
-    ]
-},
+- `[Packer]` Create and boot a VM for the specified Windows version
+- `[Packer]` Mount the `autounattend.xml` file for the Windows installer to read
+- `[Windows installer]` Set up Windows according to `autounattend.xml`
+  - WinRM is configured in the `autounattend.xml` file - if Packer fails to connect after Windows
+    has finished installing, then the answer file has not correctly set up WinRM
+- `[Packer]` Run Ansible with the playbook in `ansible-provisioning/playbook.yml` against the VM
+- `[Ansible]` Set up the VM for use as a Vagrant base box
+  - [Provision CCDC-specific Vagrant base box options](https://github.com/ccdc-confidential/ansible-role-vagrant-base-box)
+  - [Install VM guest tools as appropriate](https://github.com/ccdc-confidential/ansible-role-vm-tools)
+  - [Debloat Windows](https://github.com/ccdc-confidential/ansible-role-debloat-windows)
+  - [Compact the VM image for export](https://github.com/ccdc-confidential/ansible-role-compact-vm-image)
+- `[Packer]` Export the VM to Vagrant box format
+- `[Packer]` Upload the finished Vagrant box to Artifactory
